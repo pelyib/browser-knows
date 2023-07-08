@@ -1,0 +1,4 @@
+/node_modules
+packed/*
+bundle/assets/js/*
+*.pem

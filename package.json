@@ -1,0 +1,33 @@
+{
+    "name": "browser-knows",
+    "version": "0.0.1",
+    "description": "Knowledge base browser extension",
+    "directories": {
+        "lib": "lib"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/pelyib/browser-knows.git"
+    },
+    "keywords": [
+        "browser",
+        "knowledge base",
+        "new tab",
+        "extension"
+    ],
+    "author": "Botond Pelyi",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/pelyib/browser-knows/issues"
+    },
+    "homepage": "https://github.com/pelyib/browser-knows#readme",
+    "devDependencies": {
+        "esbuild": "^0.17.10"
+    },
+    "dependencies": {
+        "isotope-layout": "^3.0.6"
+    }
+}
