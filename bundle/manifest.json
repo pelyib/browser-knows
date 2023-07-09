@@ -1,0 +1,17 @@
+{
+    "manifest_version": 3,
+    "name": "Browser knows",
+    "description": "Knowledge base immediately in your browser new tab",
+    "version": "0.0.1",
+    "icons": {
+        "128": "assets/icons/128.png"
+    },
+    "chrome_url_overrides": {
+        "newtab": "index.html"
+    },
+    "web_accessible_resources": [{
+        "resources": ["assets/images/*.png", "_favicon/*"],
+        "matches": [],
+        "extension_ids": []
+    }]
+}
