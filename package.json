@@ -28,6 +28,7 @@
         "esbuild": "^0.17.10"
     },
     "dependencies": {
-        "isotope-layout": "^3.0.6"
+        "isotope-layout": "^3.0.6",
+        "showdown": "^2.1.0"
     }
 }

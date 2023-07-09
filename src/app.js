@@ -1,6 +1,11 @@
 import Isotope from "isotope-layout";
+import Showdown from "showdown";
 
 console.log("Browser knows")
+
+var converter = new Showdown.Converter();
+
+document.querySelectorAll('.grid-item-body').forEach(item => (item.innerHTML = converter.makeHtml(item.dataset.markdown)));
 
 iso = new Isotope('.grid', {
     itemSelector: ".grid-item",
@@ -12,3 +17,5 @@ iso = new Isotope('.grid', {
 });
 
 iso.arrange({ sortBy: 'rank', sortAscending: false });
+
+
