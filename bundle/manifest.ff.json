@@ -8,5 +8,8 @@
     },
     "chrome_url_overrides": {
         "newtab": "index.html"
+    },
+    "background": {
+        "scripts": ["assets/js/bg_worker.js"]
     }
 }

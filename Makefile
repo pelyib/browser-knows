@@ -24,10 +24,7 @@ build: ## Build the bundles
 
 pack: ## Pack the extensions
 	docker run \
-		--volume ${PWD}/bundle:/bundle \
-		--volume ${PWD}/packed:${PACKED_FOLDER} \
-		--volume ${PWD}/private.pem:/private.pem \
-		--workdir /bundle \
+		--volume ${PWD}:/app \
 		${DOCKER_BUILD_IMAGE} \
-		ash -c "zip -r -FS ${FF_PACKED} ./ && crx3-new /private.pem < ${FF_PACKED} > ${CHROME_PACKED}"
+		/app/packer
 

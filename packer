@@ -1,0 +1,20 @@
+#!/bin/ash
+
+EXT_VERSION="0.0.1"
+PACKED_FOLDER="/app/packed/"
+BUNDLE_FOLDER="/app/bundle/"
+FF_ZIP="${PACKED_FOLDER}bk_ff_${EXT_VERSION}.zip"
+CHROME_ZIP="${PACKED_FOLDER}bk_chr_${EXT_VERSION}.zip"
+CHROME_PACKED="${PACKED_FOLDER}bk_chr_${EXT_VERSION}.crx"
+MANIFEST_JSON="${BUNDLE_FOLDER}manifest.json"
+
+cd ${BUNDLE_FOLDER}
+
+cp ${BUNDLE_FOLDER}manifest.ff.json ${MANIFEST_JSON}
+zip -r -FS ${FF_ZIP} ./
+rm ${MANIFEST_JSON}
+
+cp ${BUNDLE_FOLDER}manifest.ch.json ${MANIFEST_JSON}
+zip -r -FS ${CHROME_ZIP} ./
+crx3-new /app/private.pem < ${CHROME_ZIP} > ${CHROME_PACKED}
+rm ${MANIFEST_JSON} ${CHROME_ZIP}
