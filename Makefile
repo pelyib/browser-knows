@@ -29,5 +29,6 @@ pack: ## Pack the extensions
 		--volume ${PWD}/private.pem:/private.pem \
 		--workdir /bundle \
 		${DOCKER_BUILD_IMAGE} \
-		ash -c "zip -r -FS ${FF_PACKED} ./ && crx3-new /private.pem < ${FF_PACKED} > ${CHROME_PACKED}"
-
+		# Private.pem is from Chrome, but it return an error
+		#ash -c "zip -r -FS ${FF_PACKED} ./ && crx3-new /private.pem < ${FF_PACKED} > ${CHROME_PACKED}"
+		ash -c "zip -r -FS ${FF_PACKED} ./"
