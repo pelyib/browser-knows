@@ -1,5 +1,6 @@
 import Isotope from "isotope-layout";
 import Showdown from "showdown";
+require('showdown-youtube');
 
 console.log("Browser knows")
 
@@ -7,7 +8,7 @@ console.log("Browser knows")
 // Fetch items from knowledges
 // create items from data
 
-let converter = new Showdown.Converter();
+let converter = new Showdown.Converter({extensions: ['youtube'], tables: true, emoji: true, strikethrough: true, underline: true});
 
 const browserKnowsOpenRequest = indexedDB.open('browser-knows');
 browserKnowsOpenRequest.onsuccess = (e) => {

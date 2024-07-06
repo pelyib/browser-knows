@@ -22,8 +22,17 @@ const knowledges = [
     {
         id: 3,
         tags: ['tag5', 'tag6'],
-        body: `||table||column||
-|first|second|`,
+        body: `
+| h1    |    h2   |      h3 |
+|:------|:-------:|--------:|
+| 100   | laci | maci |
+| *foo* | **bar** | ~~baz~~ |
+`,
+    },
+    {
+        id: 4,
+        tags: ['extension', 'youtube'],
+        body: '![The Bus](https://www.youtube.com/watch?v=75F3CSZcCFs =320x*)',
     }
 ];
 
