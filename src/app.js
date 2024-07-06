@@ -4,10 +4,6 @@ require('showdown-youtube');
 
 console.log("Browser knows")
 
-// Connect to browser-knows indexeddb db
-// Fetch items from knowledges
-// create items from data
-
 let converter = new Showdown.Converter({extensions: ['youtube'], tables: true, emoji: true, strikethrough: true, underline: true});
 
 const browserKnowsOpenRequest = indexedDB.open('browser-knows');
