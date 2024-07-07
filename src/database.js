@@ -42,26 +42,71 @@ const knowledges = [
     }
 ];
 
+/** @type {IDBDatabase} */
+let connection;
+
+function initConnection() {
+    return new Promise((resolve, reject) => {
+        const openRequest = indexedDB.open(dbDescription.name, dbDescription.version);
+
+        openRequest.onerror = (event) => {
+            reject(event);
+        };
+
+        openRequest.onsuccess = (event) => {
+            connection = event.target.result;
+            resolve(connection);
+        };
+
+        openRequest.onupgradeneeded = (event) => {
+            db = event.target.result;
+            const objectStore = db.createObjectStore(dbDescription.objectStores.knowledges.name, { keyPath: 'id' });
+
+            objectStore.transaction.oncomplete = () => {
+                const kwnowledgeStore = db
+                    .transaction(dbDescription.objectStores.knowledges.name, 'readwrite')
+                    .objectStore(dbDescription.objectStores.knowledges.name);
+
+                knowledges.forEach((knowledge) =>{
+                    kwnowledgeStore.add(knowledge);
+                });
+            }
+        }
+    });
+}
+
+function getConnection() {
+    if (connection) {
+        return connection;
+    }
+
+    throw new Error("Connection not established, call ensureConnection() first");
+}
+
+export async function ensureConnection() {
+    if (!connection) {
+        try {
+            await initConnection();
+        } catch (error) {
+            console.log(error);
+            throw new Error("Can not establish connection to IndexedDB");
+        }
+    }
+}
+
+export function getKnowledgeObjectStore() {
+    return getConnection()
+        .transaction(dbDescription.objectStores.knowledges.name, 'readwrite')
+        .objectStore(dbDescription.objectStores.knowledges.name);
+}
 
 export function initDb() {
-    const openRequest = indexedDB.open(dbDescription.name, dbDescription.version);
-
-    openRequest.onerror = (event) => {
-        console.log('Error opening database', event);
-    };
-
-    openRequest.onupgradeneeded = (event) => {
-        const db = event.target.result;
-        const objectStore = db.createObjectStore(dbDescription.objectStores.knowledges.name, { keyPath: 'id' });
-
-        objectStore.transaction.oncomplete = (event) => {
-            const kwnowledgeStore = db
-                .transaction(dbDescription.objectStores.knowledges.name, 'readwrite')
-                .objectStore(dbDescription.objectStores.knowledges.name);
-
-            knowledges.forEach((knowledge) =>{
-                kwnowledgeStore.add(knowledge);
-            });
-        }
-    };
+    ensureConnection()
+        .then(() => {
+            // build database here
+            console.log("Database initialized");
+        })
+        .catch((error) => {
+            console.log(error);
+        })
 }
