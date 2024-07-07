@@ -1,54 +1,54 @@
 import Isotope from "isotope-layout";
 import Showdown from "showdown";
+import { ensureConnection, getKnowledgeObjectStore } from "./database";
 require('showdown-youtube');
 
-console.log("Browser knows")
-
 let converter = new Showdown.Converter({extensions: ['youtube'], tables: true, emoji: true, strikethrough: true, underline: true});
+let grid = document.querySelector('.grid')
 
-const browserKnowsOpenRequest = indexedDB.open('browser-knows');
-browserKnowsOpenRequest.onsuccess = (e) => {
-    db = browserKnowsOpenRequest.result
-    const knowledges = db.transaction('knowledges').objectStore('knowledges');
+ensureConnection()
+    .then(() => {
+        knowledges = getKnowledgeObjectStore();
+        knowledges.openCursor().onsuccess = function (event) {
+            const cursor = event.target.result;
+            if (cursor) {
+                const gridItem = document.createElement('div');
+                gridItem.className = 'grid-item';
+                gridItem.setAttribute('data-rank', Math.floor(Math.random() * 1000));
 
-    const grid = document.querySelector('.grid')
-    knowledges.openCursor().onsuccess = function (event) {
-        const cursor = event.target.result;
-        if (cursor) {
-            const gridItem = document.createElement('div');
-            gridItem.className = 'grid-item';
-            gridItem.setAttribute('data-rank', Math.floor(Math.random() * 1000));
+                const knowledgeContainer = document.createElement('fieldset');
+                const contentContainer = document.createElement('div');
+                const content = document.createElement('p');
+                content.className = 'grid-item-body';
+                content.setAttribute('data-markdown', cursor.value.body);
+                content.innerHTML = converter.makeHtml(cursor.value.body)
+                contentContainer.appendChild(content);
+                const tags = document.createElement('p');
+                cursor.value.tags.forEach(tag => tags.append(document.createElement('span').textContent = '#' + tag));
 
-            const knowledgeContainer = document.createElement('fieldset');
-            const contentContainer = document.createElement('div');
-            const content = document.createElement('p');
-            content.className = 'grid-item-body';
-            content.setAttribute('data-markdown', cursor.value.body);
-            content.innerHTML = converter.makeHtml(cursor.value.body)
-            contentContainer.appendChild(content);
-            const tags = document.createElement('p');
-            cursor.value.tags.forEach(tag => tags.append(document.createElement('span').textContent = '#' + tag));
+                knowledgeContainer.appendChild(contentContainer);
+                knowledgeContainer.appendChild(document.createElement('hr'));
+                knowledgeContainer.appendChild(tags);
 
-            knowledgeContainer.appendChild(contentContainer);
-            knowledgeContainer.appendChild(document.createElement('hr'));
-            knowledgeContainer.appendChild(tags);
+                gridItem.appendChild(knowledgeContainer);
 
-            gridItem.appendChild(knowledgeContainer);
+                grid.appendChild(gridItem);
 
-            grid.appendChild(gridItem);
+                cursor.continue();
+            } else {
+                let iso = new Isotope('.grid', {
+                    itemSelector: ".grid-item",
+                    layoutMode: "masonry",
+                    getSortData: {
+                        rank: '[data-rank] parseInt',
+                        name: '.isotop-sort-by-name'
+                    }
+                });
 
-            cursor.continue();
-        }
-    };
-
-    let iso = new Isotope('.grid', {
-        itemSelector: ".grid-item",
-        layoutMode: "masonry",
-        getSortData: {
-            rank: '[data-rank] parseInt',
-            name: '.isotop-sort-by-name'
-        }
-    });
-
-    iso.arrange({ sortBy: 'rank', sortAscending: false });
-}
+                iso.arrange({ sortBy: 'rank', sortAscending: false });
+            }
+        };
+    })
+    .catch((error) => {
+        console.log(error);
+    })
