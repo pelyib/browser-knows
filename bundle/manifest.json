@@ -11,5 +11,8 @@
     },
     "background": {
         "scripts": ["assets/js/background.js"]
-    }
+    },
+    "permissions": [
+        "bookmarks"
+    ]
 }
