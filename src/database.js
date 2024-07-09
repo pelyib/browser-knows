@@ -4,6 +4,7 @@ const dbDescription = {
     objectStores: {
         knowledges: {
             name: 'knowledges',
+            // TODO: start to use these parameters
             keyPath: 'id',
             autoIncrement: true
         }
@@ -12,23 +13,21 @@ const dbDescription = {
 
 const knowledges = [
     {
-        id: 1,
-        tags: ['tag1', 'tag2'],
-        body: `### First
+        tags: ['list', 'markdown'],
+        body: `### A list
 
 - [ ] Item 1
 - [ ] Item 2
 - [ ] Item 3`
     },
     {
-        id: 2,
-        tags: ['tag3', 'tag4'],
-        body: `[Google](https://google.com)`,
+        tags: ['link', 'markdown'],
+        body: `### Simple link
+[Google](https://google.com)`,
     },
     {
-        id: 3,
-        tags: ['tag5', 'tag6'],
-        body: `
+        tags: ['table', 'markdown'],
+        body: `### Just a table
 | h1    |    h2   |      h3 |
 |:------|:-------:|--------:|
 | 100   | laci | maci |
@@ -36,9 +35,9 @@ const knowledges = [
 `,
     },
     {
-        id: 4,
-        tags: ['extension', 'youtube'],
-        body: '![The Bus](https://www.youtube.com/watch?v=75F3CSZcCFs =320x*)',
+        tags: ['extension', 'youtube', 'link', 'markdown'],
+        body: `### And my fav, a yt video
+![The Bus](https://www.youtube.com/watch?v=75F3CSZcCFs =320x*)`,
     }
 ];
 
@@ -60,7 +59,10 @@ function initConnection() {
 
         openRequest.onupgradeneeded = (event) => {
             db = event.target.result;
-            const objectStore = db.createObjectStore(dbDescription.objectStores.knowledges.name, { keyPath: 'id' });
+            const objectStore = db.createObjectStore(
+                dbDescription.objectStores.knowledges.name, 
+                { keyPath: 'id', autoIncrement: true }
+            );
 
             objectStore.transaction.oncomplete = () => {
                 const kwnowledgeStore = db
@@ -98,15 +100,4 @@ export function getKnowledgeObjectStore() {
     return getConnection()
         .transaction(dbDescription.objectStores.knowledges.name, 'readwrite')
         .objectStore(dbDescription.objectStores.knowledges.name);
-}
-
-export function initDb() {
-    ensureConnection()
-        .then(() => {
-            // build database here
-            console.log("Database initialized");
-        })
-        .catch((error) => {
-            console.log(error);
-        })
 }

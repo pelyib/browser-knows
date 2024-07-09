@@ -1,5 +1,8 @@
-import { initDb } from "./database";
+import { syncBookmarks } from "./bookmarks";
+import { ensureConnection } from "./database";
 
 browser.runtime.onInstalled.addListener(() => {
-    initDb();
+    ensureConnection()
+        .then(() => { syncBookmarks() })
+        .catch(() => { console.log("banan") });
 });
