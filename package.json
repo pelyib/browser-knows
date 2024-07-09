@@ -1,6 +1,6 @@
 {
     "name": "browser-knows",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "description": "Knowledge base browser extension",
     "directories": {
         "lib": "lib"
@@ -30,6 +30,7 @@
     "dependencies": {
         "isotope-layout": "^3.0.6",
         "showdown": "^2.1.0",
-        "showdown-youtube": "^1.2"
+        "showdown-youtube": "^1.2",
+        "webextension-polyfill": "0.12.0"
     }
 }
