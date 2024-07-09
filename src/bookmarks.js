@@ -1,5 +1,7 @@
 import { getKnowledgeObjectStore } from "./database";
 
+var browser = require('webextension-polyfill');
+
 export function syncBookmarks() {
     browser.bookmarks.getTree(async (bookmarkTreeNodes) => {
         await Promise.all(bookmarkTreeNodes.map(makeBookmarksFlat))
