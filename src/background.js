@@ -1,8 +1,11 @@
-import { syncBookmarks } from "./bookmarks";
+import { syncBookmarkAfterCreation, syncAllBookmarksAfterInstallation } from "./bookmarks";
 import { ensureConnection } from "./database";
 
-browser.runtime.onInstalled.addListener(() => {
-    ensureConnection()
-        .then(() => { syncBookmarks() })
-        .catch(() => { console.log("banan") });
-});
+var browser = require('webextension-polyfill');
+
+ensureConnection()
+    .then(() => { console.log("DB is ready") })
+    .catch(() => {})
+
+browser.runtime.onInstalled.addListener(syncAllBookmarksAfterInstallation);
+browser.bookmarks.onCreated.addListener(syncBookmarkAfterCreation);
