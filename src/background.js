@@ -3,9 +3,14 @@ import { ensureConnection } from "./database";
 
 var browser = require('webextension-polyfill');
 
-ensureConnection()
-    .then(() => { console.log("DB is ready") })
-    .catch(() => {})
+browser.runtime.onInstalled.addListener(() => {
+    ensureConnection()
+        .then(() => {syncAllBookmarksAfterInstallation()})
+        .catch(() => { console.log("Plugin installed but DB is not ready") });
+});
 
-browser.runtime.onInstalled.addListener(syncAllBookmarksAfterInstallation);
-browser.bookmarks.onCreated.addListener(syncBookmarkAfterCreation);
+browser.bookmarks.onCreated.addListener(() => {
+    ensureConnection()
+        .then(() => {syncBookmarkAfterCreation()})
+        .catch(() => { console.log("Bookmark created but DB is not ready") });
+});

@@ -13,24 +13,28 @@ ensureConnection()
             const cursor = event.target.result;
             if (cursor) {
                 const gridItem = document.createElement('div');
-                gridItem.className = 'grid-item';
+                gridItem.className = 'grid-item card';
                 gridItem.setAttribute('data-rank', Math.floor(Math.random() * 1000));
 
-                const knowledgeContainer = document.createElement('fieldset');
-                const contentContainer = document.createElement('div');
+                const body = document.createElement('div');
+                body.className = 'card-body';
                 const content = document.createElement('p');
                 content.className = 'grid-item-body';
                 content.setAttribute('data-markdown', cursor.value.body);
                 content.innerHTML = converter.makeHtml(cursor.value.body)
-                contentContainer.appendChild(content);
-                const tags = document.createElement('p');
-                cursor.value.tags.forEach(tag => tags.append(document.createElement('span').textContent = '#' + tag));
-
-                knowledgeContainer.appendChild(contentContainer);
-                knowledgeContainer.appendChild(document.createElement('hr'));
-                knowledgeContainer.appendChild(tags);
-
-                gridItem.appendChild(knowledgeContainer);
+                body.appendChild(content);
+                const footer = document.createElement('div');
+                footer.className = 'card-footer';
+                const tags = document.createElement('ul')
+                tags.className = 'list-inline';
+                cursor.value.tags.forEach((tag) => {
+                    const tagItem = document.createElement('li');
+                    tagItem.className = 'list-inline-item';
+                    tagItem.innerText = ' #' + tag;
+                    footer.append(tagItem);
+                });
+                gridItem.appendChild(body);
+                gridItem.appendChild(footer);
 
                 grid.appendChild(gridItem);
 
