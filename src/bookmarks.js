@@ -2,12 +2,6 @@ import { getKnowledgeObjectStore } from "./database";
 
 var browser = require('webextension-polyfill');
 
-export function syncBookmarks() {
-    browser.bookmarks.getTree(async (bookmarkTreeNodes) => {
-        await Promise.all(bookmarkTreeNodes.map(makeBookmarksFlat))
-    });
-};
-
 const makeBookmarksFlat = async function(bookmarkTree) {
     if (bookmarkTree.hasOwnProperty('children')) {
         await Promise.all(bookmarkTree.children.map(async (bookmark) => {
@@ -15,11 +9,27 @@ const makeBookmarksFlat = async function(bookmarkTree) {
                 await makeBookmarksFlat(bookmark);
             }
             else {
-                getKnowledgeObjectStore().add({
-                    tags: ['bookmark', (new URL(bookmark.url)).hostname],
-                    body: `[${bookmark.title}](${bookmark.url})`,
-                });
+                getKnowledgeObjectStore().add(mapToKnowledge(bookmark));
             }
         }));
     }
+}
+
+const mapToKnowledge = function(boomkark) {
+    return {
+        tags: ['bookmark', (new URL(boomkark.url)).hostname],
+        body: `[${boomkark.title}](${boomkark.url})`,
+    }
+}
+
+export function syncBookmarkAfterCreation(id, bookmarkTreeNode) {
+  if (bookmarkTreeNode.hasOwnProperty('url')) {
+      getKnowledgeObjectStore().add(mapToKnowledge(bookmarkTreeNode));
+  }
+}
+
+export function syncAllBookmarksAfterInstallation() {
+    browser.bookmarks.getTree(async (bookmarkTreeNodes) => {
+        await Promise.all(bookmarkTreeNodes.map(makeBookmarksFlat))
+    });
 }
