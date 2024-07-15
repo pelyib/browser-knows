@@ -1,15 +1,15 @@
-body { background-color: #7F776D; }
+body { background-color: #b6cdbd; }
 h1, h2 { text-align: center; }
-fieldset { border-radius: 5px; padding-left: 5px; padding-right: 2px; border-color: greenyellow; }
-fieldset:hover { border-color: greenyellow; }
-legend { color: #e74645; }
 ul { list-style-type: none; padding-left: 0; margin: 0; }
-li { height: 25px; padding-top: 1.5px; padding-bottom: 1.5px; display: flex; align-content: center; }
 img { height: 20px; width: 20px; padding-right: 5px; }
-a { width: 300px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: white; }
-a:link, :visited, :hover, :active { text-decoration: none; }
+a { width: 300px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+a:link, :visited, :hover, :active { text-decoration: none; color: #706381; }
+a::before { content: "\01F517"; }
+.list-inline-item::before { content:'#'; }
 
-.grid-item { width: 340px; }
+.grid-item { width: 355px; }
 .search { margin-top: 10px; margin-bottom: 10px; }
+.card { margin-top: 8px; margin-left: 8px; border-color: #f4991a; overflow: hidden; }
+.card-body { background-color: #ece8d9; }
 
 #search { margin: 0 auto; min-width: 30%; display: block; padding: 10px; }

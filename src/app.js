@@ -30,7 +30,7 @@ ensureConnection()
                 cursor.value.tags.forEach((tag) => {
                     const tagItem = document.createElement('li');
                     tagItem.className = 'list-inline-item';
-                    tagItem.innerText = ' #' + tag;
+                    tagItem.innerText = tag;
                     footer.append(tagItem);
                 });
                 gridItem.appendChild(body);
