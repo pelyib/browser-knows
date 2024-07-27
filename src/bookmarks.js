@@ -22,9 +22,9 @@ const mapToKnowledge = function(boomkark) {
     }
 }
 
-export function syncBookmarkAfterCreation(id, bookmarkTreeNode) {
-  if (bookmarkTreeNode.hasOwnProperty('url')) {
-      getKnowledgeObjectStore().add(mapToKnowledge(bookmarkTreeNode));
+export function syncBookmarkAfterCreation(bookmarkInfo) {
+  if (bookmarkInfo.hasOwnProperty('url')) {
+      getKnowledgeObjectStore().add(mapToKnowledge(bookmarkInfo));
   }
 }
 

@@ -28,7 +28,7 @@
         "esbuild": "^0.17.10"
     },
     "dependencies": {
-        "isotope-layout": "^3.0.6",
+        "bootstrap": "^5.3",
         "showdown": "^2.1.0",
         "showdown-youtube": "^1.2",
         "webextension-polyfill": "0.12.0"

@@ -1,10 +1,9 @@
-import Isotope from "isotope-layout";
 import Showdown from "showdown";
 import { ensureConnection, getKnowledgeObjectStore } from "./database";
 require('showdown-youtube');
 
 let converter = new Showdown.Converter({extensions: ['youtube'], tables: true, emoji: true, strikethrough: true, underline: true});
-let grid = document.querySelector('.grid')
+let grid = document.querySelector('#container');
 
 ensureConnection()
     .then(() => {
@@ -12,40 +11,36 @@ ensureConnection()
         knowledges.openCursor().onsuccess = function (event) {
             const cursor = event.target.result;
             if (cursor) {
-                const gridItem = document.createElement('div');
-                gridItem.className = 'grid-item';
-                gridItem.setAttribute('data-rank', Math.floor(Math.random() * 1000));
+                const col = document.createElement('div')
+                col.className = 'col';
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.setAttribute('data-rank', Math.floor(Math.random() * 1000));
 
-                const knowledgeContainer = document.createElement('fieldset');
-                const contentContainer = document.createElement('div');
+                const body = document.createElement('div');
+                body.className = 'card-body';
                 const content = document.createElement('p');
-                content.className = 'grid-item-body';
                 content.setAttribute('data-markdown', cursor.value.body);
                 content.innerHTML = converter.makeHtml(cursor.value.body)
-                contentContainer.appendChild(content);
-                const tags = document.createElement('p');
-                cursor.value.tags.forEach(tag => tags.append(document.createElement('span').textContent = '#' + tag));
+                body.appendChild(content);
+                const footer = document.createElement('div');
+                footer.className = 'card-footer';
+                const tags = document.createElement('ul')
+                tags.className = 'list-inline';
+                cursor.value.tags.forEach((tag) => {
+                    const tagItem = document.createElement('li');
+                    tagItem.className = 'list-inline-item';
+                    tagItem.innerText = tag;
+                    footer.append(tagItem);
+                });
+                card.appendChild(body);
+                card.appendChild(footer);
 
-                knowledgeContainer.appendChild(contentContainer);
-                knowledgeContainer.appendChild(document.createElement('hr'));
-                knowledgeContainer.appendChild(tags);
+                col.appendChild(card);
 
-                gridItem.appendChild(knowledgeContainer);
-
-                grid.appendChild(gridItem);
+                grid.appendChild(col);
 
                 cursor.continue();
-            } else {
-                let iso = new Isotope('.grid', {
-                    itemSelector: ".grid-item",
-                    layoutMode: "masonry",
-                    getSortData: {
-                        rank: '[data-rank] parseInt',
-                        name: '.isotop-sort-by-name'
-                    }
-                });
-
-                iso.arrange({ sortBy: 'rank', sortAscending: false });
             }
         };
     })
