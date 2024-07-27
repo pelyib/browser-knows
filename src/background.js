@@ -9,8 +9,12 @@ browser.runtime.onInstalled.addListener(() => {
         .catch(() => { console.log("Plugin installed but DB is not ready") });
 });
 
-browser.bookmarks.onCreated.addListener(() => {
+browser.bookmarks.onCreated.addListener((id, bookmarkInfo) => {
     ensureConnection()
-        .then(() => {syncBookmarkAfterCreation()})
-        .catch(() => { console.log("Bookmark created but DB is not ready") });
+        .then(() => {
+            syncBookmarkAfterCreation(bookmarkInfo)
+        })
+        .catch((error) => { 
+            console.error("Sync after bookmark creation failed, reason: ", error);
+        });
 });
