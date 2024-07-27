@@ -2,13 +2,13 @@ body { background-color: #fbf2c4; }
 h1, h2 { text-align: center; }
 ul { list-style-type: none; padding-left: 0; margin: 0; }
 img { height: 20px; width: 20px; padding-right: 5px; }
-a { width: 300px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+a { width: 290px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 a:link, :visited, :hover, :active { text-decoration: none; color: #706381; }
 a::before { content: "\01F517"; }
-.list-inline-item::before { content:'#'; }
 
-.grid-item { width: 355px; }
+.list-inline-item::before { content:'#'; }
 .search { margin-top: 10px; margin-bottom: 10px; }
+.col { min-width: 300px; max-width: 420px; }
 .card { margin-top: 8px; margin-left: 8px; border-color: #d68a58; overflow: hidden; }
 .card-body { background-color: #f0daa5; }
 
