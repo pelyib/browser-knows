@@ -1,4 +1,3 @@
-import Isotope from "isotope-layout";
 import Showdown from "showdown";
 import { ensureConnection, getKnowledgeObjectStore } from "./database";
 require('showdown-youtube');
@@ -42,17 +41,6 @@ ensureConnection()
                 grid.appendChild(col);
 
                 cursor.continue();
-            } else {
-                // let iso = new Isotope('.grid', {
-                //     itemSelector: ".grid-item",
-                //     layoutMode: "masonry",
-                //     getSortData: {
-                //         rank: '[data-rank] parseInt',
-                //         name: '.isotop-sort-by-name'
-                //     }
-                // });
-                //
-                // iso.arrange({ sortBy: 'rank', sortAscending: false });
             }
         };
     })
