@@ -11,5 +11,9 @@ a::before { content: "\01F517"; }
 .col { min-width: 300px; max-width: 420px; }
 .card { margin-top: 8px; margin-left: 8px; border-color: #d68a58; overflow: hidden; }
 .card-body { background-color: #f0daa5; }
+.overlay-in-center { display: none; position: absolute; top: 50%; left:50%; width:420px; height:500px; background-color: #dae0b8; transform: translate(-50%, -50%); }
 
 #search { margin: 0 auto; min-width: 30%; display: block; padding: 10px; }
+
+/* Bootstrap and the EasyMDE interferes each other*/
+button.table { width: auto; }

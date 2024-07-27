@@ -29,6 +29,7 @@
     },
     "dependencies": {
         "bootstrap": "^5.3",
+        "easymde": "^2.18.0",
         "showdown": "^2.1.0",
         "showdown-youtube": "^1.2",
         "webextension-polyfill": "0.12.0"

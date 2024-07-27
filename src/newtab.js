@@ -1,5 +1,6 @@
 import Showdown from "showdown";
 import { ensureConnection, getKnowledgeObjectStore } from "./database";
+import EasyMDE from "easymde";
 require('showdown-youtube');
 
 let converter = new Showdown.Converter({extensions: ['youtube'], tables: true, emoji: true, strikethrough: true, underline: true});
@@ -47,3 +48,14 @@ ensureConnection()
     .catch((error) => {
         console.log(error);
     })
+
+const createNewKnowledge = document.querySelector("#createNewKnowledge");
+createNewKnowledge.onclick = () => {
+    new EasyMDE({
+        lineNumbers: true,
+        placeholder: 'A new core memory',
+        toolbar: ["bold", "italic", "code", "quote", "|", "table", "horizontal-rule", "preview", "|", "guide"],
+        element: document.getElementById('newKnowledgeFormBody')
+    });
+    document.querySelector("#newKnowledgeFormContainer").style.display="block"
+}

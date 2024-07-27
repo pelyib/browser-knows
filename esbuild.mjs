@@ -1,11 +1,11 @@
 import * as esbuild from 'esbuild'
 
 await esbuild.build({
-  entryPoints: ['./src/app.js'],
+  entryPoints: ['./src/newtab.js'],
   bundle: true,
   minify: true,
   sourcemap: false,
-  outfile: './bundle/assets/js/app.js',
+  outfile: './bundle/assets/js/newtab.js',
 })
 
 await esbuild.build({

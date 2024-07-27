@@ -4,13 +4,17 @@
         <meta charset="UTF-8">
         <title>Browser knows</title>
         <link rel="stylesheet" href="assets/css/bootstrap.min.5.3.3.css">
+        <link rel="stylesheet" href="assets/css/easymde.min.2.18.0.css">
         <link rel="stylesheet" href="assets/css/style.css">
     </head>
     <body>
 
         <h1>A journey of a thousand miles begins with a single step</h1>
 
-        <div class="search"><input id="search" type="text" tabindex="1" autofocus /></div>
+        <div class="search">
+            <input id="search" type="text" tabindex="1" autofocus />
+            <button id="createNewKnowledge">+</button>
+        </div>
 
         <div class="container-fluid">
             <div id="container" class="row justify-content-center row-cols-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-3 row-cols-xxl-4">
@@ -18,6 +22,18 @@
         </div>
 
         <h2>finito.</h2>
+        <div id="newKnowledgeFormContainer" class="overlay-in-center">
+            <form>
+                <div class="form-group">
+                    <label for="newKnowledgeFormBody">Entire knowledge</label>
+                    <textarea id="newKnowledgeFormBody"></textarea>
+                </div>
+                <div class="form-group">
+                    <input type="text" placeholder="#tags">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
     </body>
-    <script src="assets/js/app.js"></script>
+    <script src="assets/js/newtab.js"></script>
 </html>
