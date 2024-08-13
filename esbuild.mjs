@@ -1,17 +1,25 @@
 import * as esbuild from 'esbuild'
 
-await esbuild.build({
-  entryPoints: ['./src/newtab.js'],
+let newtab = await esbuild.context({
+  entryPoints: ['/app/src/newtab.js'],
   bundle: true,
   minify: true,
   sourcemap: false,
-  outfile: './bundle/assets/js/newtab.js',
-})
+  logLevel: 'info',
+  outfile: '/app/bundle/assets/js/newtab.js',
+});
 
-await esbuild.build({
-  entryPoints: ['./src/background.js'],
+await newtab.watch();
+
+let background = await esbuild.context({
+  entryPoints: ['/app/src/background.js'],
   bundle: true,
   minify: true,
   sourcemap: false,
-  outfile: './bundle/assets/js/background.js',
-})
+  logLevel: 'info',
+  outfile: '/app/bundle/assets/js/background.js',
+});
+
+await background.watch();
+
+console.log('watching you...');

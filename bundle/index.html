@@ -2,37 +2,45 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>Browser knows</title>
         <link rel="stylesheet" href="assets/css/bootstrap.min.5.3.3.css">
         <link rel="stylesheet" href="assets/css/easymde.min.2.18.0.css">
         <link rel="stylesheet" href="assets/css/style.css">
     </head>
     <body>
-
         <h1>A journey of a thousand miles begins with a single step</h1>
-
         <div class="search">
             <input id="search" type="text" tabindex="1" autofocus />
-            <button id="createNewKnowledge">+</button>
+            <button id="createNewKnowledgeModalOpenButton" type="button" class="btn btn-primary" data-bs-toggle="modal"
+                data-bs-target="#newKnowledgeFormModal">
+                Create new
+            </button>
         </div>
-
         <div class="container-fluid">
-            <div id="container" class="row justify-content-center row-cols-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-3 row-cols-xxl-4">
+            <div id="container"
+                class="row justify-content-center row-cols-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-3 row-cols-xxl-4">
             </div>
         </div>
-
         <h2>finito.</h2>
-        <div id="newKnowledgeFormContainer" class="overlay-in-center">
-            <form>
-                <div class="form-group">
-                    <label for="newKnowledgeFormBody">Entire knowledge</label>
-                    <textarea id="newKnowledgeFormBody"></textarea>
+
+        <div id="newKnowledgeFormModal" class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">An entire new knowledge</h5>
+                        <button id="createNewKnowledgeModalCloseButton" type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close" data-bs-toggle="modal" data-bs-target="#newKnowledgeFormModal">
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <textarea id="newKnowledgeFormBody"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary">Submit</button>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <input type="text" placeholder="#tags">
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
+            </div>
         </div>
     </body>
     <script src="assets/js/newtab.js"></script>
