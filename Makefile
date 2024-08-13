@@ -19,6 +19,8 @@ build-image: ## Build the Docker images
 build: ## Build the bundles
 	docker run \
 		--volume ${PWD}:/app \
+		-t \
+		--init \
 		${DOCKER_BUILD_IMAGE} \
 		ash -c "npm install && node esbuild.mjs"
 
