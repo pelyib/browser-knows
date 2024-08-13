@@ -7,10 +7,41 @@ import {
     showNewKnowledgeFormTagTooShortToast
 } from "./toast";
 import { create as createKnowledge } from "./knowledge";
+import EasyMDE from "easymde";
 
-const tags = [];
+let easymde;
+let tags;
 
-export function addTag() {
+export function init() {
+    const body = document.getElementById('newKnowledgeFormBody');
+    easymde = new EasyMDE({
+        lineNumbers: false,
+        placeholder: 'A new core memory',
+        toolbar: ["bold", "italic", "code", "quote", "|", "table", "horizontal-rule", "preview", "|", "guide"],
+        element: body,
+        toolbarButtonClassPrefix: "mde",
+        forceSync: true,
+        autoRefresh:true,
+    });
+    tags = [];
+
+    document.getElementById('newKnowledgeForm').addEventListener('submit', create);
+    document.getElementById('addTag').addEventListener('click', addTag);
+}
+
+function reset() {
+    easymde.value("");
+    tags = [];
+
+    const visibleTags = document.getElementById('newKnowledgeFormVisibleTags');
+    while (visibleTags.firstChild) {
+        visibleTags.removeChild(visibleTags.firstChild);
+    }
+    const newTag = document.getElementById('newKnowledgeFormTag');
+    newTag.value = "";
+}
+
+function addTag() {
     const newTag = document.getElementById('newKnowledgeFormTag');
     if (newTag.value.length < 3) {
         showNewKnowledgeFormTagTooShortToast();
@@ -31,7 +62,7 @@ export function addTag() {
     newTag.value="";
 }
 
-export function create() {
+function create() {
     event.preventDefault();
 
     const body = document.getElementById('newKnowledgeFormBody');
@@ -45,7 +76,7 @@ export function create() {
 
     getKnowledgeObjectStore().add(knowledge);
 
-    // reset form
+    reset();
     // rerender the list
 
     const formModal = bootstrap.Modal.getInstance(document.getElementById('newKnowledgeFormModal'));
