@@ -24,23 +24,59 @@
         </div>
         <h2>finito.</h2>
 
+        <div id="toastContainer" class="toast-container top-0 end-0">
+            <div id="newKnowledgeFormTagTooShort" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-body">tag must be 3 character long</div>
+            </div>
+            <div id="newKnowledgeFormTagAlreadyAdded" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-body">Already on the list</div>
+            </div>
+            <div id="newKnowledgeFormBodyEmpty" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-body">You haven't wrote anything yet</div>
+            </div>
+            <div id="newKnowledgeFormCreated" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-body">New core memory saved</div>
+            </div>
+        </div>
+
         <div id="newKnowledgeFormModal" class="modal" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">An entire new knowledge</h5>
-                        <button id="createNewKnowledgeModalCloseButton" type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="Close" data-bs-toggle="modal" data-bs-target="#newKnowledgeFormModal">
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <textarea id="newKnowledgeFormBody"></textarea>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary">Submit</button>
+            <form id="newKnowledgeForm">
+                <input id="newKnowledgeFormTags" name="tags" type="text" readonly hidden />
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">An entire new knowledge</h5>
+                            <button id="createNewKnowledgeModalCloseButton" type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close" data-bs-toggle="modal" data-bs-target="#newKnowledgeFormModal">
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <textarea id="newKnowledgeFormBody"></textarea>
+                                </div>
+                                <div class="row">
+                                    <div class="col-auto input-group-sm">
+                                        <ul id="newKnowledgeFormVisibleTags" class="list-inline">
+                                        </ul>
+                                    </div>
+                                    <div class="col-5">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text" id="addon-wrapping">#</span>
+                                            <input id="newKnowledgeFormTag" type="text" class="form-control form-control-sm" placeholder="tag" aria-label="tag" aria-describedby="addon-wrapping">
+                                            <button class="btn btn-outline-secondary" type="button"
+                                                id="addTag">Add</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
     </body>
     <script src="assets/js/newtab.js"></script>

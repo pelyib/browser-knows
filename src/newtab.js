@@ -1,9 +1,7 @@
 import Showdown from "showdown";
 import { ensureConnection, getKnowledgeObjectStore } from "./database";
 import EasyMDE from "easymde";
-import $ from "jquery";
-import * as Popper from "popper.js"
-import * as bootstrap from "bootstrap"
+import {create, addTag } from "./createNew";
 require('showdown-youtube');
 
 let converter = new Showdown.Converter({extensions: ['youtube'], tables: true, emoji: true, strikethrough: true, underline: true});
@@ -19,7 +17,6 @@ ensureConnection()
                 col.className = 'col';
                 const card = document.createElement('div');
                 card.className = 'card';
-                card.setAttribute('data-rank', Math.floor(Math.random() * 1000));
 
                 const body = document.createElement('div');
                 body.className = 'card-body';
@@ -54,11 +51,17 @@ ensureConnection()
 
 function init() {
     new EasyMDE({
-        lineNumbers: true,
+        lineNumbers: false,
         placeholder: 'A new core memory',
         toolbar: ["bold", "italic", "code", "quote", "|", "table", "horizontal-rule", "preview", "|", "guide"],
-        element: document.getElementById('newKnowledgeFormBody')
+        element: document.getElementById('newKnowledgeFormBody'),
+        toolbarButtonClassPrefix: "mde",
+        forceSync: true,
+        autoRefresh:true,
     });
+
+    document.getElementById('newKnowledgeForm').addEventListener('submit', create);
+    document.getElementById('addTag').addEventListener('click', addTag);
 };
 
 init();
