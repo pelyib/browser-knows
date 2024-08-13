@@ -1,4 +1,5 @@
 import { getKnowledgeObjectStore } from "./database";
+import { create } from "./knowledge";
 
 var browser = require('webextension-polyfill');
 
@@ -16,10 +17,7 @@ const makeBookmarksFlat = async function(bookmarkTree) {
 }
 
 const mapToKnowledge = function(boomkark) {
-    return {
-        tags: ['bookmark', (new URL(boomkark.url)).hostname],
-        body: `[${boomkark.title}](${boomkark.url})`,
-    }
+    return create(`[${boomkark.title}](${boomkark.url})`, ['bookmark', (new URL(boomkark.url)).hostname]);
 }
 
 export function syncBookmarkAfterCreation(bookmarkInfo) {

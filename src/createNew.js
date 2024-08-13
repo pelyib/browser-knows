@@ -6,6 +6,7 @@ import {
     showNewKnowledgeFormTagAlreadyAdded,
     showNewKnowledgeFormTagTooShortToast
 } from "./toast";
+import { create as createKnowledge } from "./knowledge";
 
 const tags = [];
 
@@ -40,10 +41,7 @@ export function create() {
         return;
     }
 
-    const knowledge = {
-        tags: tags,
-        body: body.value,
-    }
+    const knowledge = createKnowledge(body.value, tags);
 
     getKnowledgeObjectStore().add(knowledge);
 
