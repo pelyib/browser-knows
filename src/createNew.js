@@ -1,5 +1,5 @@
 import * as bootstrap from "bootstrap"
-import { getKnowledgeObjectStore } from "./database";
+import { ensureConnection, getKnowledgeObjectStore, getAllTags } from "./database";
 import { 
     showNewKnowledgeFormBodyEmpty,
     showNewKnowledgeCreated,
@@ -28,6 +28,23 @@ export function init() {
 
     document.getElementById('newKnowledgeForm').addEventListener('submit', create);
     document.getElementById('addTag').addEventListener('click', addTag);
+    document.getElementById('newKnowledgeFormModal').addEventListener('show.bs.modal', populateTagSuggestions);
+}
+
+function populateTagSuggestions() {
+    ensureConnection()
+        .then(() => getAllTags())
+        .then((tags) => {
+            const datalist = document.getElementById('newKnowledgeFormTagOptions');
+            datalist.replaceChildren(...tags.map((tag) => {
+                const option = document.createElement('option');
+                option.value = tag;
+                return option;
+            }));
+        })
+        .catch((error) => {
+            console.log(error);
+        });
 }
 
 function reset() {

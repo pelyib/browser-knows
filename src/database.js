@@ -122,3 +122,11 @@ export function getAllKnowledge() {
         };
     });
 }
+
+export function getAllTags() {
+    return getAllKnowledge().then((knowledges) => {
+        const tags = new Set();
+        knowledges.forEach((knowledge) => knowledge.tags.forEach((tag) => tags.add(tag)));
+        return [...tags].sort();
+    });
+}
