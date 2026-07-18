@@ -1,10 +1,9 @@
-import Showdown from "showdown";
-require('showdown-youtube');
+import { converter } from "./markdown";
 
-const converter = new Showdown.Converter({extensions: ['youtube'], tables: true, emoji: true, strikethrough: true, underline: true});
 const grid = document.querySelector('#container');
 
 export const TAG_TOGGLED_EVENT = 'tag:toggled';
+export const KNOWLEDGE_OPENED_EVENT = 'knowledge:opened';
 
 export function renderKnowledgeCard(knowledge, prepend = false, activeTags = new Set()) {
     const col = document.createElement('div')
@@ -34,7 +33,19 @@ export function renderKnowledgeCard(knowledge, prepend = false, activeTags = new
         });
         tags.appendChild(tagItem);
     });
+
+    const openButton = document.createElement('button');
+    openButton.type = 'button';
+    openButton.className = 'card-open-btn';
+    openButton.innerHTML = '&#8599;';
+    openButton.setAttribute('aria-label', 'Open');
+    openButton.title = 'Open';
+    openButton.addEventListener('click', () => {
+        document.dispatchEvent(new CustomEvent(KNOWLEDGE_OPENED_EVENT, { detail: { knowledge } }));
+    });
+
     footer.appendChild(tags);
+    footer.appendChild(openButton);
     card.appendChild(body);
     card.appendChild(footer);
 

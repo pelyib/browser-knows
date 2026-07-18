@@ -123,10 +123,21 @@ export function getAllKnowledge() {
     });
 }
 
-export function getAllTags() {
+export function computeTagUsage(knowledges) {
+    const usage = new Map();
+    knowledges.forEach((knowledge) => {
+        knowledge.tags.forEach((tag) => {
+            usage.set(tag, (usage.get(tag) || 0) + 1);
+        });
+    });
+    return usage;
+}
+
+export function getTagsByUsage() {
     return getAllKnowledge().then((knowledges) => {
-        const tags = new Set();
-        knowledges.forEach((knowledge) => knowledge.tags.forEach((tag) => tags.add(tag)));
-        return [...tags].sort();
+        const usage = computeTagUsage(knowledges);
+        return [...usage.entries()]
+            .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+            .map(([tag]) => tag);
     });
 }

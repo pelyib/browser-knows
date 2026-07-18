@@ -34,6 +34,21 @@
         </main>
         <footer class="app-footer">finito.</footer>
 
+        <div id="knowledgeViewModal" class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Knowledge</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="knowledgeViewBody"></div>
+                        <ul id="knowledgeViewTags" class="list-inline mt-3"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="toastContainer" class="toast-container top-0 end-0">
             <div id="newKnowledgeFormTagTooShort" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="toast-body">tag must be 3 character long</div>

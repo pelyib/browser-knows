@@ -1,5 +1,5 @@
 import * as bootstrap from "bootstrap"
-import { ensureConnection, getKnowledgeObjectStore, getAllTags } from "./database";
+import { ensureConnection, getKnowledgeObjectStore, getTagsByUsage } from "./database";
 import { 
     showNewKnowledgeFormBodyEmpty,
     showNewKnowledgeCreated,
@@ -33,7 +33,7 @@ export function init() {
 
 function populateTagSuggestions() {
     ensureConnection()
-        .then(() => getAllTags())
+        .then(() => getTagsByUsage())
         .then((tags) => {
             const datalist = document.getElementById('newKnowledgeFormTagOptions');
             datalist.replaceChildren(...tags.map((tag) => {
