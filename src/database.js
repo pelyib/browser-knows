@@ -101,3 +101,24 @@ export function getKnowledgeObjectStore() {
         .transaction(dbDescription.objectStores.knowledges.name, 'readwrite')
         .objectStore(dbDescription.objectStores.knowledges.name);
 }
+
+export function getAllKnowledge() {
+    return new Promise((resolve, reject) => {
+        const results = [];
+        const request = getKnowledgeObjectStore().openCursor();
+
+        request.onsuccess = (event) => {
+            const cursor = event.target.result;
+            if (cursor) {
+                results.push(cursor.value);
+                cursor.continue();
+            } else {
+                resolve(results);
+            }
+        };
+
+        request.onerror = (event) => {
+            reject(event.target.error);
+        };
+    });
+}
