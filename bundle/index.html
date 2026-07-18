@@ -12,15 +12,18 @@
         <header class="app-header">
             <div class="app-header-inner">
                 <h1 class="app-title">A journey of a thousand miles begins with a single step</h1>
-                <div class="search">
-                    <input id="search" type="text" tabindex="1" autofocus placeholder="Search your knowledge&hellip;" />
-                    <button id="createNewKnowledgeModalOpenButton" type="button" class="btn btn-primary" data-bs-toggle="modal"
-                        data-bs-target="#newKnowledgeFormModal">
-                        New entry
-                    </button>
-                    <button id="themeToggle" type="button" class="btn btn-outline-secondary theme-toggle" aria-label="Switch to dark mode" title="Switch to dark mode">
-                        &#127769;
-                    </button>
+                <div class="search-group">
+                    <div class="search">
+                        <input id="search" type="text" tabindex="1" autofocus placeholder="Search your knowledge&hellip;" />
+                        <button id="createNewKnowledgeModalOpenButton" type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#newKnowledgeFormModal">
+                            New entry
+                        </button>
+                        <button id="themeToggle" type="button" class="btn btn-outline-secondary theme-toggle" aria-label="Switch to dark mode" title="Switch to dark mode">
+                            &#127769;
+                        </button>
+                    </div>
+                    <ul id="selectedTagsFilter" class="list-inline selected-tags-filter"></ul>
                 </div>
             </div>
         </header>

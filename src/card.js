@@ -4,7 +4,9 @@ require('showdown-youtube');
 const converter = new Showdown.Converter({extensions: ['youtube'], tables: true, emoji: true, strikethrough: true, underline: true});
 const grid = document.querySelector('#container');
 
-export function renderKnowledgeCard(knowledge, prepend = false) {
+export const TAG_TOGGLED_EVENT = 'tag:toggled';
+
+export function renderKnowledgeCard(knowledge, prepend = false, activeTags = new Set()) {
     const col = document.createElement('div')
     col.className = 'col';
     const card = document.createElement('div');
@@ -22,10 +24,17 @@ export function renderKnowledgeCard(knowledge, prepend = false) {
     tags.className = 'list-inline';
     knowledge.tags.forEach((tag) => {
         const tagItem = document.createElement('li');
-        tagItem.className = 'list-inline-item';
+        tagItem.className = 'list-inline-item tag-item';
+        if (activeTags.has(tag)) {
+            tagItem.classList.add('tag-active');
+        }
         tagItem.innerText = tag;
-        footer.append(tagItem);
+        tagItem.addEventListener('click', () => {
+            document.dispatchEvent(new CustomEvent(TAG_TOGGLED_EVENT, { detail: { tag } }));
+        });
+        tags.appendChild(tagItem);
     });
+    footer.appendChild(tags);
     card.appendChild(body);
     card.appendChild(footer);
 
