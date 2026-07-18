@@ -9,20 +9,27 @@
         <link rel="stylesheet" href="assets/css/style.css">
     </head>
     <body>
-        <h1>A journey of a thousand miles begins with a single step</h1>
-        <div class="search">
-            <input id="search" type="text" tabindex="1" autofocus />
-            <button id="createNewKnowledgeModalOpenButton" type="button" class="btn btn-primary" data-bs-toggle="modal"
-                data-bs-target="#newKnowledgeFormModal">
-                Create new
-            </button>
-        </div>
-        <div class="container-fluid">
+        <header class="app-header">
+            <div class="app-header-inner">
+                <h1 class="app-title">A journey of a thousand miles begins with a single step</h1>
+                <div class="search">
+                    <input id="search" type="text" tabindex="1" autofocus placeholder="Search your knowledge&hellip;" />
+                    <button id="createNewKnowledgeModalOpenButton" type="button" class="btn btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#newKnowledgeFormModal">
+                        New entry
+                    </button>
+                    <button id="themeToggle" type="button" class="btn btn-outline-secondary theme-toggle" aria-label="Switch to dark mode" title="Switch to dark mode">
+                        &#127769;
+                    </button>
+                </div>
+            </div>
+        </header>
+        <main class="container-fluid">
             <div id="container"
                 class="row justify-content-center row-cols-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-3 row-cols-xxl-4">
             </div>
-        </div>
-        <h2>finito.</h2>
+        </main>
+        <footer class="app-footer">finito.</footer>
 
         <div id="toastContainer" class="toast-container top-0 end-0">
             <div id="newKnowledgeFormTagTooShort" class="toast" role="alert" aria-live="assertive" aria-atomic="true">

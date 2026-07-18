@@ -7,6 +7,7 @@ import {
     showNewKnowledgeFormTagTooShortToast
 } from "./toast";
 import { create as createKnowledge } from "./knowledge";
+import { renderKnowledgeCard } from "./card";
 import EasyMDE from "easymde";
 
 let easymde;
@@ -62,7 +63,7 @@ function addTag() {
     newTag.value="";
 }
 
-function create() {
+function create(event) {
     event.preventDefault();
 
     const body = document.getElementById('newKnowledgeFormBody');
@@ -73,14 +74,21 @@ function create() {
     }
 
     const knowledge = createKnowledge(body.value, tags);
+    const request = getKnowledgeObjectStore().add(knowledge);
 
-    getKnowledgeObjectStore().add(knowledge);
+    request.onsuccess = (event) => {
+        knowledge.id = event.target.result;
+        renderKnowledgeCard(knowledge, true);
 
-    reset();
-    // rerender the list
+        reset();
 
-    const formModal = bootstrap.Modal.getInstance(document.getElementById('newKnowledgeFormModal'));
-    formModal.hide();
+        const formModal = bootstrap.Modal.getInstance(document.getElementById('newKnowledgeFormModal'));
+        formModal.hide();
 
-    showNewKnowledgeCreated();
+        showNewKnowledgeCreated();
+    };
+
+    request.onerror = (event) => {
+        console.error("Failed to save new knowledge, reason: ", event.target.error);
+    };
 }
