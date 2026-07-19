@@ -237,6 +237,13 @@ body {
     color: var(--bs-body-color);
 }
 
+.dropdown-item-icon {
+    display: inline-block;
+    width: 1.4em;
+    text-align: center;
+    margin-right: .35rem;
+}
+
 .dropdown-item.text-danger:hover,
 .dropdown-item.text-danger:focus {
     background: var(--bs-danger-bg-subtle);

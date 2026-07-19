@@ -34,7 +34,7 @@ function createActionsMenu(items) {
             const button = document.createElement('button');
             button.type = 'button';
             button.className = 'dropdown-item' + (item.danger ? ' text-danger' : '');
-            button.innerText = item.label;
+            button.innerHTML = `<span class="dropdown-item-icon">${item.icon}</span>${item.label}`;
             button.addEventListener('click', item.onClick);
             li.appendChild(button);
         }
@@ -91,10 +91,10 @@ export function renderKnowledgeCard(knowledge, prepend = false, activeTags = new
     });
 
     const actions = createActionsMenu([
-        { label: 'Open', onClick: () => document.dispatchEvent(new CustomEvent(KNOWLEDGE_OPENED_EVENT, { detail: { knowledge } })) },
-        { label: 'Edit', onClick: () => document.dispatchEvent(new CustomEvent(KNOWLEDGE_EDIT_REQUESTED_EVENT, { detail: { knowledge } })) },
+        { icon: '&#8599;', label: 'Open', onClick: () => document.dispatchEvent(new CustomEvent(KNOWLEDGE_OPENED_EVENT, { detail: { knowledge } })) },
+        { icon: '&#9998;', label: 'Edit', onClick: () => document.dispatchEvent(new CustomEvent(KNOWLEDGE_EDIT_REQUESTED_EVENT, { detail: { knowledge } })) },
         { divider: true },
-        { label: 'Delete', danger: true, onClick: () => document.dispatchEvent(new CustomEvent(KNOWLEDGE_DELETE_REQUESTED_EVENT, { detail: { knowledge } })) },
+        { icon: '&#128465;', label: 'Delete', danger: true, onClick: () => document.dispatchEvent(new CustomEvent(KNOWLEDGE_DELETE_REQUESTED_EVENT, { detail: { knowledge } })) },
     ]);
 
     footer.appendChild(tags);
