@@ -27,7 +27,21 @@ export function renderKnowledgeCard(knowledge, prepend = false, activeTags = new
     const content = document.createElement('p');
     content.setAttribute('data-markdown', knowledge.body);
     content.innerHTML = converter.makeHtml(knowledge.body)
-    body.appendChild(content);
+
+    if (knowledge.favicon) {
+        const row = document.createElement('div');
+        row.className = 'card-body-row';
+        const favicon = document.createElement('img');
+        favicon.className = 'card-favicon';
+        favicon.src = knowledge.favicon;
+        favicon.alt = '';
+        favicon.addEventListener('error', () => favicon.remove());
+        row.appendChild(favicon);
+        row.appendChild(content);
+        body.appendChild(row);
+    } else {
+        body.appendChild(content);
+    }
     const footer = document.createElement('div');
     footer.className = 'card-footer';
     const tags = document.createElement('ul')

@@ -176,6 +176,25 @@ body {
     margin: 0;
 }
 
+.card-body-row {
+    display: flex;
+    align-items: flex-start;
+    gap: .4rem;
+}
+
+.card-body-row p {
+    flex: 1;
+    min-width: 0;
+}
+
+.card-favicon {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+    margin-top: .2rem;
+    border-radius: 3px;
+}
+
 .card-footer {
     background: transparent;
     border-top: 1px solid var(--bs-border-color);

@@ -24,7 +24,9 @@ const makeBookmarksFlat = async function(bookmarkTree) {
 }
 
 const mapToKnowledge = function(boomkark) {
-    return create(`[${boomkark.title}](${boomkark.url})`, ['bookmark', (new URL(boomkark.url)).hostname]);
+    const hostname = (new URL(boomkark.url)).hostname;
+    const favicon = `https://${hostname}/favicon.ico`;
+    return create(`[${boomkark.title}](${boomkark.url})`, ['bookmark', hostname], favicon);
 }
 
 export function syncBookmarkAfterCreation(bookmarkInfo) {
