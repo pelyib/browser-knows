@@ -80,12 +80,28 @@ function renderResults() {
 }
 
 export function init() {
-    document.getElementById('search').addEventListener('input', () => {
+    const input = document.getElementById('search');
+    const clearButton = document.getElementById('clearSearch');
+
+    const updateClearButtonVisibility = () => {
+        clearButton.classList.toggle('visible', input.value.length > 0);
+    };
+
+    input.addEventListener('input', () => {
+        updateClearButtonVisibility();
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(renderResults, DEBOUNCE_MS);
     });
 
+    clearButton.addEventListener('click', () => {
+        input.value = '';
+        updateClearButtonVisibility();
+        renderResults();
+        input.focus();
+    });
+
     document.addEventListener(TAG_TOGGLED_EVENT, (event) => toggleTag(event.detail.tag));
 
+    updateClearButtonVisibility();
     renderResults();
 }
