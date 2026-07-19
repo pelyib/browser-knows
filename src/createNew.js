@@ -5,11 +5,14 @@ import {
     showNewKnowledgeCreated,
     showKnowledgeUpdated,
     showNewKnowledgeFormTagAlreadyAdded,
-    showNewKnowledgeFormTagTooShortToast
+    showNewKnowledgeFormTagTooShortToast,
+    showInvalidUrlToast
 } from "./toast";
 import { create as createKnowledge } from "./knowledge";
 import { renderKnowledgeCard, KNOWLEDGE_EDIT_REQUESTED_EVENT } from "./card";
 import { refresh as refreshResults } from "./search";
+import { getSettings } from "./settings";
+import { resolveFavicon } from "./favicon";
 import EasyMDE from "easymde";
 
 let easymde;
@@ -34,7 +37,14 @@ export function init() {
     document.getElementById('addTag').addEventListener('click', addTag);
     document.getElementById('newKnowledgeFormModal').addEventListener('show.bs.modal', populateTagSuggestions);
     document.getElementById('newKnowledgeFormModal').addEventListener('hidden.bs.modal', reset);
+    document.getElementById('newKnowledgeFormBookmarkToggle').addEventListener('change', toggleBookmarkMode);
     document.addEventListener(KNOWLEDGE_EDIT_REQUESTED_EVENT, (event) => beginEdit(event.detail.knowledge));
+}
+
+function toggleBookmarkMode() {
+    const isBookmark = document.getElementById('newKnowledgeFormBookmarkToggle').checked;
+    document.getElementById('newKnowledgeFormNoteFields').hidden = isBookmark;
+    document.getElementById('newKnowledgeFormBookmarkFields').hidden = !isBookmark;
 }
 
 function populateTagSuggestions() {
@@ -56,6 +66,7 @@ function populateTagSuggestions() {
 function setModalMode(isEdit) {
     document.getElementById('newKnowledgeFormModalTitle').innerText = isEdit ? 'Edit knowledge' : 'An entire new knowledge';
     document.getElementById('newKnowledgeFormSubmitButton').innerText = isEdit ? 'Save' : 'Submit';
+    document.getElementById('newKnowledgeFormBookmarkToggleWrapper').hidden = isEdit;
 }
 
 function reset() {
@@ -70,6 +81,11 @@ function reset() {
     }
     const newTag = document.getElementById('newKnowledgeFormTag');
     newTag.value = "";
+
+    document.getElementById('newKnowledgeFormBookmarkToggle').checked = false;
+    document.getElementById('newKnowledgeFormBookmarkTitle').value = "";
+    document.getElementById('newKnowledgeFormBookmarkUrl').value = "";
+    toggleBookmarkMode();
 }
 
 function beginEdit(knowledge) {
@@ -115,6 +131,24 @@ function addTag() {
 function submit(event) {
     event.preventDefault();
 
+    if (editingKnowledge) {
+        const body = document.getElementById('newKnowledgeFormBody');
+        if (body.value.length < 1) {
+            showNewKnowledgeFormBodyEmpty();
+            return;
+        }
+        updateKnowledge(body.value);
+        return;
+    }
+
+    if (document.getElementById('newKnowledgeFormBookmarkToggle').checked) {
+        createBookmark();
+    } else {
+        createNote();
+    }
+}
+
+function createNote() {
     const body = document.getElementById('newKnowledgeFormBody');
 
     if (body.value.length < 1) {
@@ -122,15 +156,37 @@ function submit(event) {
         return;
     }
 
-    if (editingKnowledge) {
-        updateKnowledge(body.value);
-    } else {
-        createNewKnowledge(body.value);
-    }
+    saveNewKnowledge(createKnowledge(body.value, tags));
 }
 
-function createNewKnowledge(body) {
-    const knowledge = createKnowledge(body, tags);
+function createBookmark() {
+    const title = document.getElementById('newKnowledgeFormBookmarkTitle');
+    const url = document.getElementById('newKnowledgeFormBookmarkUrl');
+
+    if (title.value.length < 1 || url.value.length < 1) {
+        showNewKnowledgeFormBodyEmpty();
+        return;
+    }
+
+    let hostname;
+    try {
+        hostname = new URL(url.value).hostname;
+    } catch (error) {
+        showInvalidUrlToast();
+        return;
+    }
+
+    const bookmarkTags = [...new Set(['bookmark', hostname, ...tags])];
+    const body = `[${title.value}](${url.value})`;
+
+    getSettings()
+        .then((settings) => settings.faviconFetchingEnabled ? resolveFavicon(hostname) : null)
+        .then((favicon) => {
+            saveNewKnowledge(createKnowledge(body, bookmarkTags, favicon));
+        });
+}
+
+function saveNewKnowledge(knowledge) {
     const request = getKnowledgeObjectStore().add(knowledge);
 
     request.onsuccess = (event) => {

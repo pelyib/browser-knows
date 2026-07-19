@@ -20,6 +20,10 @@ export function showKnowledgeUpdated() {
     showToast('newKnowledgeFormUpdated');
 }
 
+export function showInvalidUrlToast() {
+    showToast('newKnowledgeFormInvalidUrl');
+}
+
 function showToast(id) {
     const toast = document.getElementById(id);
     const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast);
