@@ -5,15 +5,46 @@ const grid = document.querySelector('#container');
 export const TAG_TOGGLED_EVENT = 'tag:toggled';
 export const KNOWLEDGE_OPENED_EVENT = 'knowledge:opened';
 export const KNOWLEDGE_EDIT_REQUESTED_EVENT = 'knowledge:editRequested';
+export const KNOWLEDGE_DELETE_REQUESTED_EVENT = 'knowledge:deleteRequested';
 
-function createIconButton(label, glyph) {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'card-icon-btn';
-    button.innerHTML = glyph;
-    button.setAttribute('aria-label', label);
-    button.title = label;
-    return button;
+function createActionsMenu(items) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'dropdown card-actions';
+
+    const toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'card-icon-btn';
+    toggle.innerHTML = '&#9881;&#65039;';
+    toggle.setAttribute('data-bs-toggle', 'dropdown');
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Actions');
+    toggle.title = 'Actions';
+
+    const menu = document.createElement('ul');
+    menu.className = 'dropdown-menu dropdown-menu-end';
+
+    items.forEach((item) => {
+        const li = document.createElement('li');
+
+        if (item.divider) {
+            const hr = document.createElement('hr');
+            hr.className = 'dropdown-divider';
+            li.appendChild(hr);
+        } else {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'dropdown-item' + (item.danger ? ' text-danger' : '');
+            button.innerText = item.label;
+            button.addEventListener('click', item.onClick);
+            li.appendChild(button);
+        }
+
+        menu.appendChild(li);
+    });
+
+    wrapper.appendChild(toggle);
+    wrapper.appendChild(menu);
+    return wrapper;
 }
 
 export function renderKnowledgeCard(knowledge, prepend = false, activeTags = new Set()) {
@@ -59,21 +90,12 @@ export function renderKnowledgeCard(knowledge, prepend = false, activeTags = new
         tags.appendChild(tagItem);
     });
 
-    const actions = document.createElement('div');
-    actions.className = 'card-actions';
-
-    const editButton = createIconButton('Edit', '&#9998;');
-    editButton.addEventListener('click', () => {
-        document.dispatchEvent(new CustomEvent(KNOWLEDGE_EDIT_REQUESTED_EVENT, { detail: { knowledge } }));
-    });
-
-    const openButton = createIconButton('Open', '&#8599;');
-    openButton.addEventListener('click', () => {
-        document.dispatchEvent(new CustomEvent(KNOWLEDGE_OPENED_EVENT, { detail: { knowledge } }));
-    });
-
-    actions.appendChild(editButton);
-    actions.appendChild(openButton);
+    const actions = createActionsMenu([
+        { label: 'Open', onClick: () => document.dispatchEvent(new CustomEvent(KNOWLEDGE_OPENED_EVENT, { detail: { knowledge } })) },
+        { label: 'Edit', onClick: () => document.dispatchEvent(new CustomEvent(KNOWLEDGE_EDIT_REQUESTED_EVENT, { detail: { knowledge } })) },
+        { divider: true },
+        { label: 'Delete', danger: true, onClick: () => document.dispatchEvent(new CustomEvent(KNOWLEDGE_DELETE_REQUESTED_EVENT, { detail: { knowledge } })) },
+    ]);
 
     footer.appendChild(tags);
     footer.appendChild(actions);

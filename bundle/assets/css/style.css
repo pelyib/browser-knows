@@ -148,6 +148,8 @@ body {
 }
 
 .card {
+    position: relative;
+    z-index: 0;
     height: 100%;
     margin: 0;
     border-radius: var(--bk-radius);
@@ -159,6 +161,10 @@ body {
 .card:hover {
     transform: translateY(-2px);
     box-shadow: var(--bk-shadow-hover);
+}
+
+.card:has(.dropdown-menu.show) {
+    z-index: 5;
 }
 
 .card-body {
@@ -211,8 +217,6 @@ body {
 }
 
 .card-actions {
-    display: flex;
-    gap: .15rem;
     flex: 0 0 auto;
 }
 
@@ -231,6 +235,12 @@ body {
 .card-icon-btn:hover {
     background: var(--bs-tertiary-bg);
     color: var(--bs-body-color);
+}
+
+.dropdown-item.text-danger:hover,
+.dropdown-item.text-danger:focus {
+    background: var(--bs-danger-bg-subtle);
+    color: var(--bs-danger);
 }
 
 /* Tags */

@@ -61,6 +61,24 @@
             </div>
         </div>
 
+        <div id="deleteConfirmModal" class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Delete this entry?</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="mb-0">This can't be undone.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button id="deleteConfirmButton" type="button" class="btn btn-danger">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="toastContainer" class="toast-container top-0 end-0">
             <div id="newKnowledgeFormTagTooShort" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="toast-body">tag must be 3 character long</div>
@@ -79,6 +97,9 @@
             </div>
             <div id="newKnowledgeFormInvalidUrl" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="toast-body">That doesn't look like a valid URL</div>
+            </div>
+            <div id="knowledgeDeleted" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-body">Knowledge deleted</div>
             </div>
         </div>
 

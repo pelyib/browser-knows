@@ -28,6 +28,7 @@
         "esbuild": "^0.17.10"
     },
     "dependencies": {
+        "@popperjs/core": "^2.11.8",
         "bootstrap": "^5.3",
         "easymde": "^2.18.0",
         "jquery": "3.7",

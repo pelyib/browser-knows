@@ -24,6 +24,10 @@ export function showInvalidUrlToast() {
     showToast('newKnowledgeFormInvalidUrl');
 }
 
+export function showKnowledgeDeleted() {
+    showToast('knowledgeDeleted');
+}
+
 function showToast(id) {
     const toast = document.getElementById(id);
     const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast);
