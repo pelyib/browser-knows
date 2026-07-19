@@ -6,6 +6,8 @@ export const TAG_TOGGLED_EVENT = 'tag:toggled';
 export const KNOWLEDGE_OPENED_EVENT = 'knowledge:opened';
 export const KNOWLEDGE_EDIT_REQUESTED_EVENT = 'knowledge:editRequested';
 export const KNOWLEDGE_DELETE_REQUESTED_EVENT = 'knowledge:deleteRequested';
+export const KNOWLEDGE_RESTORE_REQUESTED_EVENT = 'knowledge:restoreRequested';
+export const KNOWLEDGE_PERMANENT_DELETE_REQUESTED_EVENT = 'knowledge:permanentDeleteRequested';
 
 function createActionsMenu(items) {
     const wrapper = document.createElement('div');
@@ -90,12 +92,26 @@ export function renderKnowledgeCard(knowledge, prepend = false, activeTags = new
         tags.appendChild(tagItem);
     });
 
-    const actions = createActionsMenu([
+    const actionItems = [
         { icon: '&#8599;', label: 'Open', onClick: () => document.dispatchEvent(new CustomEvent(KNOWLEDGE_OPENED_EVENT, { detail: { knowledge } })) },
-        { icon: '&#9998;', label: 'Edit', onClick: () => document.dispatchEvent(new CustomEvent(KNOWLEDGE_EDIT_REQUESTED_EVENT, { detail: { knowledge } })) },
-        { divider: true },
-        { icon: '&#128465;', label: 'Delete', danger: true, onClick: () => document.dispatchEvent(new CustomEvent(KNOWLEDGE_DELETE_REQUESTED_EVENT, { detail: { knowledge } })) },
-    ]);
+    ];
+
+    if (knowledge.isDeleted) {
+        actionItems.push(
+            { divider: true },
+            { icon: '&#8634;', label: 'Restore', onClick: () => document.dispatchEvent(new CustomEvent(KNOWLEDGE_RESTORE_REQUESTED_EVENT, { detail: { knowledge } })) },
+            { divider: true },
+            { icon: '&#128465;', label: 'Delete permanently', danger: true, onClick: () => document.dispatchEvent(new CustomEvent(KNOWLEDGE_PERMANENT_DELETE_REQUESTED_EVENT, { detail: { knowledge } })) },
+        );
+    } else {
+        actionItems.push(
+            { icon: '&#9998;', label: 'Edit', onClick: () => document.dispatchEvent(new CustomEvent(KNOWLEDGE_EDIT_REQUESTED_EVENT, { detail: { knowledge } })) },
+            { divider: true },
+            { icon: '&#128465;', label: 'Delete', danger: true, onClick: () => document.dispatchEvent(new CustomEvent(KNOWLEDGE_DELETE_REQUESTED_EVENT, { detail: { knowledge } })) },
+        );
+    }
+
+    const actions = createActionsMenu(actionItems);
 
     footer.appendChild(tags);
     footer.appendChild(actions);

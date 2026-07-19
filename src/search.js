@@ -5,10 +5,11 @@ const DEFAULT_LIMIT = 6;
 const DEBOUNCE_MS = 150;
 
 let debounceTimer;
+let showingTrash = false;
 const selectedTags = new Set();
 
-function isActive(knowledge) {
-    return !knowledge.isDeleted;
+function isInCurrentView(knowledge) {
+    return showingTrash ? !!knowledge.isDeleted : !knowledge.isDeleted;
 }
 
 function matchesQuery(knowledge, query) {
@@ -63,6 +64,20 @@ function toggleTag(tag) {
     renderResults();
 }
 
+function updateTrashButton() {
+    const button = document.getElementById('trashButton');
+    button.classList.toggle('active', showingTrash);
+    const label = showingTrash ? 'Back to knowledge' : 'View trash';
+    button.setAttribute('aria-label', label);
+    button.title = label;
+}
+
+function toggleTrashView() {
+    showingTrash = !showingTrash;
+    updateTrashButton();
+    renderResults();
+}
+
 function renderResults() {
     const query = document.getElementById('search').value.trim().toLowerCase();
 
@@ -70,10 +85,10 @@ function renderResults() {
         .then(() => Promise.all([getAllKnowledge(), getTagUsageMap()]))
         .then(([knowledges, tagUsage]) => {
             const matched = knowledges
-                .filter((knowledge) => isActive(knowledge) && matchesQuery(knowledge, query) && matchesSelectedTags(knowledge))
+                .filter((knowledge) => isInCurrentView(knowledge) && matchesQuery(knowledge, query) && matchesSelectedTags(knowledge))
                 .sort((a, b) => computeWeight(b, tagUsage) - computeWeight(a, tagUsage));
             const hasActiveFilter = query.length > 0 || selectedTags.size > 0;
-            const results = hasActiveFilter ? matched : matched.slice(0, DEFAULT_LIMIT);
+            const results = (hasActiveFilter || showingTrash) ? matched : matched.slice(0, DEFAULT_LIMIT);
 
             clearChildren(document.getElementById('container'));
             results.forEach((knowledge) => renderKnowledgeCard(knowledge, false, selectedTags));
@@ -105,6 +120,7 @@ export function init() {
     });
 
     document.addEventListener(TAG_TOGGLED_EVENT, (event) => toggleTag(event.detail.tag));
+    document.getElementById('trashButton').addEventListener('click', toggleTrashView);
 
     updateClearButtonVisibility();
     renderResults();

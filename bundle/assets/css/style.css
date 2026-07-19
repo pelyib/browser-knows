@@ -140,6 +140,12 @@ body {
     color: var(--bs-body-color);
 }
 
+.header-icon-btn.active {
+    background: var(--bs-primary);
+    border-color: var(--bs-primary);
+    color: #fff;
+}
+
 /* Cards */
 .col {
     min-width: 300px;
@@ -389,35 +395,3 @@ button.table {
     margin-bottom: 1.5rem;
 }
 
-/* Trash */
-.trash-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.trash-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: .75rem 0;
-    border-bottom: 1px solid var(--bs-border-color);
-}
-
-.trash-item:last-child {
-    border-bottom: none;
-}
-
-.trash-item-body {
-    flex: 1;
-    min-width: 0;
-    font-size: .92rem;
-}
-
-.trash-item-body p {
-    margin-bottom: 0;
-}
-
-.trash-item-restore {
-    flex: 0 0 auto;
-}

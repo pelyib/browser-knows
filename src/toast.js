@@ -28,6 +28,10 @@ export function showKnowledgeDeleted() {
     showToast('knowledgeDeleted');
 }
 
+export function showKnowledgePermanentlyDeleted() {
+    showToast('knowledgePermanentlyDeleted');
+}
+
 function showToast(id) {
     const toast = document.getElementById(id);
     const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast);

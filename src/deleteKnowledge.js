@@ -1,10 +1,14 @@
 import * as bootstrap from "bootstrap";
 import { getKnowledgeObjectStore, recordTagsUsage, decrementTagUsage } from "./database";
-import { KNOWLEDGE_DELETE_REQUESTED_EVENT } from "./card";
+import {
+    KNOWLEDGE_DELETE_REQUESTED_EVENT,
+    KNOWLEDGE_RESTORE_REQUESTED_EVENT,
+    KNOWLEDGE_PERMANENT_DELETE_REQUESTED_EVENT
+} from "./card";
 import { refresh as refreshResults } from "./search";
-import { showKnowledgeDeleted } from "./toast";
+import { showKnowledgeDeleted, showKnowledgePermanentlyDeleted } from "./toast";
 
-let pendingKnowledge = null;
+let pendingDelete = null;
 let lastDeletedKnowledge = null;
 
 function softDeleteKnowledge(knowledge) {
@@ -23,6 +27,21 @@ function softDeleteKnowledge(knowledge) {
     };
 }
 
+function permanentlyDeleteKnowledge(knowledge) {
+    // Tag usage was already decremented when this entry was soft-deleted, so
+    // permanently deleting it here must not decrement it a second time.
+    const request = getKnowledgeObjectStore().delete(knowledge.id);
+
+    request.onsuccess = () => {
+        refreshResults();
+        showKnowledgePermanentlyDeleted();
+    };
+
+    request.onerror = (event) => {
+        console.error("Failed to permanently delete knowledge, reason: ", event.target.error);
+    };
+}
+
 export function restoreKnowledge(knowledge) {
     knowledge.isDeleted = false;
     const request = getKnowledgeObjectStore().put(knowledge);
@@ -37,16 +56,37 @@ export function restoreKnowledge(knowledge) {
     };
 }
 
+function showDeleteConfirm(knowledge, permanent) {
+    pendingDelete = { knowledge, permanent };
+
+    document.getElementById('deleteConfirmModalTitle').innerText = permanent
+        ? 'Delete permanently?'
+        : 'Delete this entry?';
+    document.getElementById('deleteConfirmModalBody').innerText = permanent
+        ? "This removes it for good — it won't be in the trash anymore."
+        : 'You can restore it later from the trash.';
+    document.getElementById('deleteConfirmButton').innerText = permanent ? 'Delete permanently' : 'Delete';
+
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('deleteConfirmModal')).show();
+}
+
 export function init() {
     document.addEventListener(KNOWLEDGE_DELETE_REQUESTED_EVENT, (event) => {
-        pendingKnowledge = event.detail.knowledge;
-        bootstrap.Modal.getOrCreateInstance(document.getElementById('deleteConfirmModal')).show();
+        showDeleteConfirm(event.detail.knowledge, false);
+    });
+
+    document.addEventListener(KNOWLEDGE_PERMANENT_DELETE_REQUESTED_EVENT, (event) => {
+        showDeleteConfirm(event.detail.knowledge, true);
     });
 
     document.getElementById('deleteConfirmButton').addEventListener('click', () => {
-        if (pendingKnowledge) {
-            softDeleteKnowledge(pendingKnowledge);
-            pendingKnowledge = null;
+        if (pendingDelete) {
+            if (pendingDelete.permanent) {
+                permanentlyDeleteKnowledge(pendingDelete.knowledge);
+            } else {
+                softDeleteKnowledge(pendingDelete.knowledge);
+            }
+            pendingDelete = null;
         }
         bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
     });
@@ -57,5 +97,9 @@ export function init() {
             lastDeletedKnowledge = null;
         }
         bootstrap.Toast.getInstance(document.getElementById('knowledgeDeleted'))?.hide();
+    });
+
+    document.addEventListener(KNOWLEDGE_RESTORE_REQUESTED_EVENT, (event) => {
+        restoreKnowledge(event.detail.knowledge);
     });
 }
