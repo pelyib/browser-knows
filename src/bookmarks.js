@@ -1,6 +1,7 @@
 import { getKnowledgeObjectStore, recordTagsUsage } from "./database";
 import { create } from "./knowledge";
 import { getSettings } from "./settings";
+import { resolveFavicon } from "./favicon";
 
 var browser = require('webextension-polyfill');
 
@@ -18,22 +19,22 @@ const makeBookmarksFlat = async function(bookmarkTree, settings) {
                 await makeBookmarksFlat(bookmark, settings);
             }
             else {
-                saveKnowledge(mapToKnowledge(bookmark, settings));
+                saveKnowledge(await mapToKnowledge(bookmark, settings));
             }
         }));
     }
 }
 
-const mapToKnowledge = function(boomkark, settings) {
+const mapToKnowledge = async function(boomkark, settings) {
     const hostname = (new URL(boomkark.url)).hostname;
-    const favicon = settings.faviconFetchingEnabled ? `https://${hostname}/favicon.ico` : null;
+    const favicon = settings.faviconFetchingEnabled ? await resolveFavicon(hostname) : null;
     return create(`[${boomkark.title}](${boomkark.url})`, ['bookmark', hostname], favicon);
 }
 
 export async function syncBookmarkAfterCreation(bookmarkInfo) {
   if (bookmarkInfo.hasOwnProperty('url')) {
       const settings = await getSettings();
-      saveKnowledge(mapToKnowledge(bookmarkInfo, settings));
+      saveKnowledge(await mapToKnowledge(bookmarkInfo, settings));
   }
 }
 

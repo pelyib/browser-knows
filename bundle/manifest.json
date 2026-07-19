@@ -19,5 +19,8 @@
     "permissions": [
         "bookmarks",
         "storage"
+    ],
+    "host_permissions": [
+        "https://favicon.vemetric.com/*"
     ]
 }
