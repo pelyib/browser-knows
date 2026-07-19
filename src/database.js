@@ -41,7 +41,7 @@ const knowledges = [
     {
         tags: ['extension', 'youtube', 'link', 'markdown'],
         body: `### And my fav, a yt video
-![The Bus](https://www.youtube.com/watch?v=75F3CSZcCFs =250x*)`,
+![The Bus](https://www.youtube.com/watch?v=83m261lAlrs =250x*)`,
     }
 ];
 
