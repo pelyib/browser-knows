@@ -66,7 +66,14 @@ function populateTagSuggestions() {
 function setModalMode(isEdit) {
     document.getElementById('newKnowledgeFormModalTitle').innerText = isEdit ? 'Edit knowledge' : 'An entire new knowledge';
     document.getElementById('newKnowledgeFormSubmitButton').innerText = isEdit ? 'Save' : 'Submit';
-    document.getElementById('newKnowledgeFormBookmarkToggleWrapper').hidden = isEdit;
+}
+
+function parseBookmarkBody(body) {
+    const match = body.match(/^\[([^\]]*)\]\((\S+)\)$/);
+    if (!match) {
+        return null;
+    }
+    return { title: match[1], url: match[2] };
 }
 
 function reset() {
@@ -93,6 +100,15 @@ function beginEdit(knowledge) {
     tags = [...knowledge.tags];
     tags.forEach(appendVisibleTag);
     easymde.value(knowledge.body);
+
+    const bookmark = knowledge.tags.includes('bookmark') ? parseBookmarkBody(knowledge.body) : null;
+    if (bookmark) {
+        document.getElementById('newKnowledgeFormBookmarkTitle').value = bookmark.title;
+        document.getElementById('newKnowledgeFormBookmarkUrl').value = bookmark.url;
+    }
+    document.getElementById('newKnowledgeFormBookmarkToggle').checked = !!bookmark;
+    toggleBookmarkMode();
+
     setModalMode(true);
 
     bootstrap.Modal.getOrCreateInstance(document.getElementById('newKnowledgeFormModal')).show();
@@ -131,41 +147,40 @@ function addTag() {
 function submit(event) {
     event.preventDefault();
 
-    if (editingKnowledge) {
-        const body = document.getElementById('newKnowledgeFormBody');
-        if (body.value.length < 1) {
-            showNewKnowledgeFormBodyEmpty();
+    const buildData = document.getElementById('newKnowledgeFormBookmarkToggle').checked
+        ? buildBookmarkData()
+        : buildNoteData();
+
+    buildData.then((data) => {
+        if (!data) {
             return;
         }
-        updateKnowledge(body.value);
-        return;
-    }
-
-    if (document.getElementById('newKnowledgeFormBookmarkToggle').checked) {
-        createBookmark();
-    } else {
-        createNote();
-    }
+        if (editingKnowledge) {
+            updateKnowledge(data);
+        } else {
+            saveNewKnowledge(createKnowledge(data.body, data.tags, data.favicon));
+        }
+    });
 }
 
-function createNote() {
+function buildNoteData() {
     const body = document.getElementById('newKnowledgeFormBody');
 
     if (body.value.length < 1) {
         showNewKnowledgeFormBodyEmpty();
-        return;
+        return Promise.resolve(null);
     }
 
-    saveNewKnowledge(createKnowledge(body.value, tags));
+    return Promise.resolve({ body: body.value, tags: [...tags], favicon: null });
 }
 
-function createBookmark() {
+function buildBookmarkData() {
     const title = document.getElementById('newKnowledgeFormBookmarkTitle');
     const url = document.getElementById('newKnowledgeFormBookmarkUrl');
 
     if (title.value.length < 1 || url.value.length < 1) {
         showNewKnowledgeFormBodyEmpty();
-        return;
+        return Promise.resolve(null);
     }
 
     let hostname;
@@ -173,17 +188,15 @@ function createBookmark() {
         hostname = new URL(url.value).hostname;
     } catch (error) {
         showInvalidUrlToast();
-        return;
+        return Promise.resolve(null);
     }
 
     const bookmarkTags = [...new Set(['bookmark', hostname, ...tags])];
     const body = `[${title.value}](${url.value})`;
 
-    getSettings()
+    return getSettings()
         .then((settings) => settings.faviconFetchingEnabled ? resolveFavicon(hostname) : null)
-        .then((favicon) => {
-            saveNewKnowledge(createKnowledge(body, bookmarkTags, favicon));
-        });
+        .then((favicon) => ({ body, tags: bookmarkTags, favicon }));
 }
 
 function saveNewKnowledge(knowledge) {
@@ -204,16 +217,17 @@ function saveNewKnowledge(knowledge) {
     };
 }
 
-function updateKnowledge(body) {
+function updateKnowledge(data) {
     const previousTags = editingKnowledge.tags;
-    editingKnowledge.body = body;
-    editingKnowledge.tags = tags;
+    editingKnowledge.body = data.body;
+    editingKnowledge.tags = data.tags;
+    editingKnowledge.favicon = data.favicon;
 
     const request = getKnowledgeObjectStore().put(editingKnowledge);
 
     request.onsuccess = () => {
-        const addedTags = tags.filter((tag) => !previousTags.includes(tag));
-        const removedTags = previousTags.filter((tag) => !tags.includes(tag));
+        const addedTags = data.tags.filter((tag) => !previousTags.includes(tag));
+        const removedTags = previousTags.filter((tag) => !data.tags.includes(tag));
 
         recordTagsUsage(addedTags);
         removedTags.forEach(decrementTagUsage);
