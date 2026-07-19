@@ -1,4 +1,4 @@
-import { ensureConnection, getAllKnowledge, computeTagUsage } from "./database";
+import { ensureConnection, getAllKnowledge, getTagUsageMap } from "./database";
 import { renderKnowledgeCard, TAG_TOGGLED_EVENT } from "./card";
 
 const DEFAULT_LIMIT = 6;
@@ -63,9 +63,8 @@ function renderResults() {
     const query = document.getElementById('search').value.trim().toLowerCase();
 
     ensureConnection()
-        .then(() => getAllKnowledge())
-        .then((knowledges) => {
-            const tagUsage = computeTagUsage(knowledges);
+        .then(() => Promise.all([getAllKnowledge(), getTagUsageMap()]))
+        .then(([knowledges, tagUsage]) => {
             const matched = knowledges
                 .filter((knowledge) => matchesQuery(knowledge, query) && matchesSelectedTags(knowledge))
                 .sort((a, b) => computeWeight(b, tagUsage) - computeWeight(a, tagUsage));

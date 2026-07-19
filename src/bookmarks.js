@@ -1,7 +1,14 @@
-import { getKnowledgeObjectStore } from "./database";
+import { getKnowledgeObjectStore, recordTagsUsage } from "./database";
 import { create } from "./knowledge";
 
 var browser = require('webextension-polyfill');
+
+const saveKnowledge = function(knowledge) {
+    const request = getKnowledgeObjectStore().add(knowledge);
+    request.onsuccess = () => {
+        recordTagsUsage(knowledge.tags);
+    };
+}
 
 const makeBookmarksFlat = async function(bookmarkTree) {
     if (bookmarkTree.hasOwnProperty('children')) {
@@ -10,7 +17,7 @@ const makeBookmarksFlat = async function(bookmarkTree) {
                 await makeBookmarksFlat(bookmark);
             }
             else {
-                getKnowledgeObjectStore().add(mapToKnowledge(bookmark));
+                saveKnowledge(mapToKnowledge(bookmark));
             }
         }));
     }
@@ -22,7 +29,7 @@ const mapToKnowledge = function(boomkark) {
 
 export function syncBookmarkAfterCreation(bookmarkInfo) {
   if (bookmarkInfo.hasOwnProperty('url')) {
-      getKnowledgeObjectStore().add(mapToKnowledge(bookmarkInfo));
+      saveKnowledge(mapToKnowledge(bookmarkInfo));
   }
 }
 

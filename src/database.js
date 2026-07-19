@@ -1,12 +1,16 @@
 const dbDescription = {
     name: 'browser-knows',
-    version: 1,
+    version: 2,
     objectStores: {
         knowledges: {
             name: 'knowledges',
             // TODO: start to use these parameters
             keyPath: 'id',
             autoIncrement: true
+        },
+        tags: {
+            name: 'tags',
+            keyPath: 'name'
         }
     },
 }
@@ -58,11 +62,12 @@ function initConnection() {
         };
 
         openRequest.onupgradeneeded = (event) => {
-            db = event.target.result;
+            const db = event.target.result;
             const objectStore = db.createObjectStore(
-                dbDescription.objectStores.knowledges.name, 
+                dbDescription.objectStores.knowledges.name,
                 { keyPath: 'id', autoIncrement: true }
             );
+            db.createObjectStore(dbDescription.objectStores.tags.name, { keyPath: 'name' });
 
             objectStore.transaction.oncomplete = () => {
                 const kwnowledgeStore = db
@@ -71,6 +76,21 @@ function initConnection() {
 
                 knowledges.forEach((knowledge) =>{
                     kwnowledgeStore.add(knowledge);
+                });
+
+                const tagsStore = db
+                    .transaction(dbDescription.objectStores.tags.name, 'readwrite')
+                    .objectStore(dbDescription.objectStores.tags.name);
+
+                knowledges.forEach((knowledge) => {
+                    knowledge.tags.forEach((tag) => {
+                        const request = tagsStore.get(tag);
+                        request.onsuccess = () => {
+                            const record = request.result || { name: tag, usageCount: 0 };
+                            record.usageCount += 1;
+                            tagsStore.put(record);
+                        };
+                    });
                 });
             }
         }
@@ -102,6 +122,12 @@ export function getKnowledgeObjectStore() {
         .objectStore(dbDescription.objectStores.knowledges.name);
 }
 
+function getTagsObjectStore() {
+    return getConnection()
+        .transaction(dbDescription.objectStores.tags.name, 'readwrite')
+        .objectStore(dbDescription.objectStores.tags.name);
+}
+
 export function getAllKnowledge() {
     return new Promise((resolve, reject) => {
         const results = [];
@@ -123,19 +149,41 @@ export function getAllKnowledge() {
     });
 }
 
-export function computeTagUsage(knowledges) {
-    const usage = new Map();
-    knowledges.forEach((knowledge) => {
-        knowledge.tags.forEach((tag) => {
-            usage.set(tag, (usage.get(tag) || 0) + 1);
-        });
+export function recordTagsUsage(tags) {
+    const store = getTagsObjectStore();
+    tags.forEach((tag) => {
+        const request = store.get(tag);
+        request.onsuccess = () => {
+            const record = request.result || { name: tag, usageCount: 0 };
+            record.usageCount += 1;
+            store.put(record);
+        };
     });
-    return usage;
+}
+
+export function getTagUsageMap() {
+    return new Promise((resolve, reject) => {
+        const usage = new Map();
+        const request = getTagsObjectStore().openCursor();
+
+        request.onsuccess = (event) => {
+            const cursor = event.target.result;
+            if (cursor) {
+                usage.set(cursor.value.name, cursor.value.usageCount);
+                cursor.continue();
+            } else {
+                resolve(usage);
+            }
+        };
+
+        request.onerror = (event) => {
+            reject(event.target.error);
+        };
+    });
 }
 
 export function getTagsByUsage() {
-    return getAllKnowledge().then((knowledges) => {
-        const usage = computeTagUsage(knowledges);
+    return getTagUsageMap().then((usage) => {
         return [...usage.entries()]
             .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
             .map(([tag]) => tag);

@@ -1,5 +1,5 @@
 import * as bootstrap from "bootstrap"
-import { ensureConnection, getKnowledgeObjectStore, getTagsByUsage } from "./database";
+import { ensureConnection, getKnowledgeObjectStore, getTagsByUsage, recordTagsUsage } from "./database";
 import { 
     showNewKnowledgeFormBodyEmpty,
     showNewKnowledgeCreated,
@@ -95,6 +95,7 @@ function create(event) {
 
     request.onsuccess = (event) => {
         knowledge.id = event.target.result;
+        recordTagsUsage(knowledge.tags);
         renderKnowledgeCard(knowledge, true);
 
         reset();
