@@ -11,9 +11,7 @@ browser.runtime.onInstalled.addListener(() => {
 
 browser.bookmarks.onCreated.addListener((id, bookmarkInfo) => {
     ensureConnection()
-        .then(() => {
-            syncBookmarkAfterCreation(bookmarkInfo)
-        })
+        .then(() => syncBookmarkAfterCreation(bookmarkInfo))
         .catch((error) => { 
             console.error("Sync after bookmark creation failed, reason: ", error);
         });

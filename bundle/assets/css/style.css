@@ -124,7 +124,7 @@ body {
     color: var(--bs-body-color);
 }
 
-.theme-toggle {
+.header-icon-btn {
     flex: 0 0 auto;
     width: 2.5rem;
     padding: 0;
@@ -134,8 +134,8 @@ body {
     line-height: 1;
 }
 
-.theme-toggle:hover,
-.theme-toggle:focus {
+.header-icon-btn:hover,
+.header-icon-btn:focus {
     background: var(--bs-tertiary-bg);
     color: var(--bs-body-color);
 }
@@ -357,4 +357,17 @@ button.table {
 
 [data-bs-theme="dark"] .CodeMirror-cursor {
     border-left-color: var(--bs-body-color);
+}
+
+/* Settings page */
+.settings-page {
+    max-width: 480px;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+}
+
+.settings-title {
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
 }

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Browser knows &ndash; Settings</title>
+        <link rel="stylesheet" href="assets/css/bootstrap.min.5.3.3.css">
+        <link rel="stylesheet" href="assets/css/style.css">
+    </head>
+    <body>
+        <main class="settings-page">
+            <h1 class="settings-title">Settings</h1>
+            <form id="settingsForm" class="settings-form">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="faviconFetchingEnabled">
+                    <label class="form-check-label" for="faviconFetchingEnabled">
+                        Fetch favicons for imported bookmarks
+                    </label>
+                </div>
+            </form>
+        </main>
+
+        <div id="toastContainer" class="toast-container top-0 end-0">
+            <div id="settingsSaved" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-body">Settings saved</div>
+            </div>
+        </div>
+    </body>
+    <script src="assets/js/options.js"></script>
+</html>

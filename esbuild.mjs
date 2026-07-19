@@ -22,4 +22,15 @@ let background = await esbuild.context({
 
 await background.watch();
 
+let options = await esbuild.context({
+  entryPoints: ['/app/src/options.js'],
+  bundle: true,
+  minify: true,
+  sourcemap: false,
+  logLevel: 'info',
+  outfile: '/app/bundle/assets/js/options.js',
+});
+
+await options.watch();
+
 console.log('watching you...');
