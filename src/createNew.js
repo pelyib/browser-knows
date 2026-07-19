@@ -1,17 +1,20 @@
 import * as bootstrap from "bootstrap"
-import { ensureConnection, getKnowledgeObjectStore, getTagsByUsage, recordTagsUsage } from "./database";
-import { 
+import { ensureConnection, getKnowledgeObjectStore, getTagsByUsage, recordTagsUsage, decrementTagUsage } from "./database";
+import {
     showNewKnowledgeFormBodyEmpty,
     showNewKnowledgeCreated,
+    showKnowledgeUpdated,
     showNewKnowledgeFormTagAlreadyAdded,
     showNewKnowledgeFormTagTooShortToast
 } from "./toast";
 import { create as createKnowledge } from "./knowledge";
-import { renderKnowledgeCard } from "./card";
+import { renderKnowledgeCard, KNOWLEDGE_EDIT_REQUESTED_EVENT } from "./card";
+import { refresh as refreshResults } from "./search";
 import EasyMDE from "easymde";
 
 let easymde;
 let tags;
+let editingKnowledge;
 
 export function init() {
     const body = document.getElementById('newKnowledgeFormBody');
@@ -25,10 +28,13 @@ export function init() {
         autoRefresh:true,
     });
     tags = [];
+    editingKnowledge = null;
 
-    document.getElementById('newKnowledgeForm').addEventListener('submit', create);
+    document.getElementById('newKnowledgeForm').addEventListener('submit', submit);
     document.getElementById('addTag').addEventListener('click', addTag);
     document.getElementById('newKnowledgeFormModal').addEventListener('show.bs.modal', populateTagSuggestions);
+    document.getElementById('newKnowledgeFormModal').addEventListener('hidden.bs.modal', reset);
+    document.addEventListener(KNOWLEDGE_EDIT_REQUESTED_EVENT, (event) => beginEdit(event.detail.knowledge));
 }
 
 function populateTagSuggestions() {
@@ -47,9 +53,16 @@ function populateTagSuggestions() {
         });
 }
 
+function setModalMode(isEdit) {
+    document.getElementById('newKnowledgeFormModalTitle').innerText = isEdit ? 'Edit knowledge' : 'An entire new knowledge';
+    document.getElementById('newKnowledgeFormSubmitButton').innerText = isEdit ? 'Save' : 'Submit';
+}
+
 function reset() {
     easymde.value("");
     tags = [];
+    editingKnowledge = null;
+    setModalMode(false);
 
     const visibleTags = document.getElementById('newKnowledgeFormVisibleTags');
     while (visibleTags.firstChild) {
@@ -57,6 +70,29 @@ function reset() {
     }
     const newTag = document.getElementById('newKnowledgeFormTag');
     newTag.value = "";
+}
+
+function beginEdit(knowledge) {
+    editingKnowledge = knowledge;
+    tags = [...knowledge.tags];
+    tags.forEach(appendVisibleTag);
+    easymde.value(knowledge.body);
+    setModalMode(true);
+
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('newKnowledgeFormModal')).show();
+}
+
+function appendVisibleTag(tag) {
+    const visibleTag = document.createElement('li');
+    visibleTag.className = 'list-inline-item removable-tag';
+    visibleTag.innerText = tag;
+    visibleTag.title = 'Click to remove';
+    visibleTag.addEventListener('click', () => {
+        tags = tags.filter((existing) => existing !== tag);
+        visibleTag.remove();
+    });
+
+    document.getElementById('newKnowledgeFormVisibleTags').appendChild(visibleTag);
 }
 
 function addTag() {
@@ -70,17 +106,13 @@ function addTag() {
         return;
     }
 
-    const visibleTag = document.createElement('li');
-    visibleTag.className = 'list-inline-item';
-    visibleTag.innerText = newTag.value;
     tags.push(newTag.value);
-
-    document.getElementById('newKnowledgeFormVisibleTags').appendChild(visibleTag);
+    appendVisibleTag(newTag.value);
 
     newTag.value="";
 }
 
-function create(event) {
+function submit(event) {
     event.preventDefault();
 
     const body = document.getElementById('newKnowledgeFormBody');
@@ -90,7 +122,15 @@ function create(event) {
         return;
     }
 
-    const knowledge = createKnowledge(body.value, tags);
+    if (editingKnowledge) {
+        updateKnowledge(body.value);
+    } else {
+        createNewKnowledge(body.value);
+    }
+}
+
+function createNewKnowledge(body) {
+    const knowledge = createKnowledge(body, tags);
     const request = getKnowledgeObjectStore().add(knowledge);
 
     request.onsuccess = (event) => {
@@ -98,15 +138,38 @@ function create(event) {
         recordTagsUsage(knowledge.tags);
         renderKnowledgeCard(knowledge, true);
 
-        reset();
-
-        const formModal = bootstrap.Modal.getInstance(document.getElementById('newKnowledgeFormModal'));
-        formModal.hide();
+        bootstrap.Modal.getInstance(document.getElementById('newKnowledgeFormModal')).hide();
 
         showNewKnowledgeCreated();
     };
 
     request.onerror = (event) => {
         console.error("Failed to save new knowledge, reason: ", event.target.error);
+    };
+}
+
+function updateKnowledge(body) {
+    const previousTags = editingKnowledge.tags;
+    editingKnowledge.body = body;
+    editingKnowledge.tags = tags;
+
+    const request = getKnowledgeObjectStore().put(editingKnowledge);
+
+    request.onsuccess = () => {
+        const addedTags = tags.filter((tag) => !previousTags.includes(tag));
+        const removedTags = previousTags.filter((tag) => !tags.includes(tag));
+
+        recordTagsUsage(addedTags);
+        removedTags.forEach(decrementTagUsage);
+
+        refreshResults();
+
+        bootstrap.Modal.getInstance(document.getElementById('newKnowledgeFormModal')).hide();
+
+        showKnowledgeUpdated();
+    };
+
+    request.onerror = (event) => {
+        console.error("Failed to update knowledge, reason: ", event.target.error);
     };
 }

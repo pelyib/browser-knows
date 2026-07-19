@@ -16,6 +16,10 @@ export function showNewKnowledgeCreated() {
     showToast('newKnowledgeFormCreated');
 }
 
+export function showKnowledgeUpdated() {
+    showToast('newKnowledgeFormUpdated');
+}
+
 function showToast(id) {
     const toast = document.getElementById(id);
     const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast);

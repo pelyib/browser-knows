@@ -191,7 +191,13 @@ body {
     min-width: 0;
 }
 
-.card-open-btn {
+.card-actions {
+    display: flex;
+    gap: .15rem;
+    flex: 0 0 auto;
+}
+
+.card-icon-btn {
     flex: 0 0 auto;
     border: none;
     background: transparent;
@@ -203,7 +209,7 @@ body {
     border-radius: 6px;
 }
 
-.card-open-btn:hover {
+.card-icon-btn:hover {
     background: var(--bs-tertiary-bg);
     color: var(--bs-body-color);
 }
@@ -254,6 +260,16 @@ ul.list-inline {
     content: '\2715';
     margin-left: .35rem;
     opacity: .85;
+}
+
+.removable-tag {
+    cursor: pointer;
+    user-select: none;
+}
+
+.removable-tag:hover {
+    opacity: .6;
+    text-decoration: line-through;
 }
 
 /* Links inside card bodies */

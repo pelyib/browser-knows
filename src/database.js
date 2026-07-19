@@ -161,6 +161,19 @@ export function recordTagsUsage(tags) {
     });
 }
 
+export function decrementTagUsage(tag) {
+    const store = getTagsObjectStore();
+    const request = store.get(tag);
+    request.onsuccess = () => {
+        const record = request.result;
+        if (!record) {
+            return;
+        }
+        record.usageCount = Math.max(0, record.usageCount - 1);
+        store.put(record);
+    };
+}
+
 export function getTagUsageMap() {
     return new Promise((resolve, reject) => {
         const usage = new Map();

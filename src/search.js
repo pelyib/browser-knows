@@ -105,3 +105,5 @@ export function init() {
     updateClearButtonVisibility();
     renderResults();
 }
+
+export { renderResults as refresh };

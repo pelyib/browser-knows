@@ -74,6 +74,9 @@
             <div id="newKnowledgeFormCreated" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="toast-body">New core memory saved</div>
             </div>
+            <div id="newKnowledgeFormUpdated" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-body">Knowledge updated</div>
+            </div>
         </div>
 
         <div id="newKnowledgeFormModal" class="modal" tabindex="-1" role="dialog">
@@ -82,7 +85,7 @@
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">An entire new knowledge</h5>
+                            <h5 id="newKnowledgeFormModalTitle" class="modal-title">An entire new knowledge</h5>
                             <button id="createNewKnowledgeModalCloseButton" type="button" class="btn-close" data-bs-dismiss="modal"
                                 aria-label="Close" data-bs-toggle="modal" data-bs-target="#newKnowledgeFormModal">
                             </button>
@@ -110,7 +113,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button id="newKnowledgeFormSubmitButton" type="submit" class="btn btn-primary">Submit</button>
                         </div>
                     </div>
                 </div>

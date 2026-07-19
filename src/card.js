@@ -4,6 +4,17 @@ const grid = document.querySelector('#container');
 
 export const TAG_TOGGLED_EVENT = 'tag:toggled';
 export const KNOWLEDGE_OPENED_EVENT = 'knowledge:opened';
+export const KNOWLEDGE_EDIT_REQUESTED_EVENT = 'knowledge:editRequested';
+
+function createIconButton(label, glyph) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'card-icon-btn';
+    button.innerHTML = glyph;
+    button.setAttribute('aria-label', label);
+    button.title = label;
+    return button;
+}
 
 export function renderKnowledgeCard(knowledge, prepend = false, activeTags = new Set()) {
     const col = document.createElement('div')
@@ -34,18 +45,24 @@ export function renderKnowledgeCard(knowledge, prepend = false, activeTags = new
         tags.appendChild(tagItem);
     });
 
-    const openButton = document.createElement('button');
-    openButton.type = 'button';
-    openButton.className = 'card-open-btn';
-    openButton.innerHTML = '&#8599;';
-    openButton.setAttribute('aria-label', 'Open');
-    openButton.title = 'Open';
+    const actions = document.createElement('div');
+    actions.className = 'card-actions';
+
+    const editButton = createIconButton('Edit', '&#9998;');
+    editButton.addEventListener('click', () => {
+        document.dispatchEvent(new CustomEvent(KNOWLEDGE_EDIT_REQUESTED_EVENT, { detail: { knowledge } }));
+    });
+
+    const openButton = createIconButton('Open', '&#8599;');
     openButton.addEventListener('click', () => {
         document.dispatchEvent(new CustomEvent(KNOWLEDGE_OPENED_EVENT, { detail: { knowledge } }));
     });
 
+    actions.appendChild(editButton);
+    actions.appendChild(openButton);
+
     footer.appendChild(tags);
-    footer.appendChild(openButton);
+    footer.appendChild(actions);
     card.appendChild(body);
     card.appendChild(footer);
 
