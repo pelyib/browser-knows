@@ -2,6 +2,7 @@ import { init as initCreateNewForm } from "./createNew";
 import { init as initSearch } from "./search";
 import { init as initKnowledgeView } from "./knowledgeView";
 import { init as initDeleteKnowledge } from "./deleteKnowledge";
+import { init as initTrash } from "./trash";
 import { applyColorTheme } from "./theme";
 
 function init() {
@@ -10,6 +11,7 @@ function init() {
     initSearch();
     initKnowledgeView();
     initDeleteKnowledge();
+    initTrash();
 };
 
 init();

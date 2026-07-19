@@ -3,5 +3,6 @@ export function create(body, tags, favicon = null) {
         body: body,
         tags: tags,
         favicon: favicon,
+        isDeleted: false,
     };
 }

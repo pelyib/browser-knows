@@ -7,6 +7,10 @@ const DEBOUNCE_MS = 150;
 let debounceTimer;
 const selectedTags = new Set();
 
+function isActive(knowledge) {
+    return !knowledge.isDeleted;
+}
+
 function matchesQuery(knowledge, query) {
     if (!query) {
         return true;
@@ -66,7 +70,7 @@ function renderResults() {
         .then(() => Promise.all([getAllKnowledge(), getTagUsageMap()]))
         .then(([knowledges, tagUsage]) => {
             const matched = knowledges
-                .filter((knowledge) => matchesQuery(knowledge, query) && matchesSelectedTags(knowledge))
+                .filter((knowledge) => isActive(knowledge) && matchesQuery(knowledge, query) && matchesSelectedTags(knowledge))
                 .sort((a, b) => computeWeight(b, tagUsage) - computeWeight(a, tagUsage));
             const hasActiveFilter = query.length > 0 || selectedTags.size > 0;
             const results = hasActiveFilter ? matched : matched.slice(0, DEFAULT_LIMIT);
