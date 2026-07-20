@@ -1,11 +1,14 @@
 import { ensureConnection, getAllKnowledge, getTagUsageMap } from "./database";
 import { renderKnowledgeCard, TAG_TOGGLED_EVENT } from "./card";
 
-const DEFAULT_LIMIT = 6;
+const PAGE_SIZE = 12;
+const MAX_ITEMS = 100;
 const DEBOUNCE_MS = 150;
 
 let debounceTimer;
 let showingTrash = false;
+let currentMatches = [];
+let loadedCount = 0;
 const selectedTags = new Set();
 
 function isInCurrentView(knowledge) {
@@ -78,24 +81,43 @@ function toggleTrashView() {
     renderResults();
 }
 
+function loadMore() {
+    if (loadedCount >= currentMatches.length || loadedCount >= MAX_ITEMS) {
+        return;
+    }
+
+    const nextCount = Math.min(loadedCount + PAGE_SIZE, MAX_ITEMS, currentMatches.length);
+    currentMatches.slice(loadedCount, nextCount).forEach((knowledge) => renderKnowledgeCard(knowledge, false, selectedTags));
+    loadedCount = nextCount;
+}
+
 function renderResults() {
     const query = document.getElementById('search').value.trim().toLowerCase();
 
     ensureConnection()
         .then(() => Promise.all([getAllKnowledge(), getTagUsageMap()]))
         .then(([knowledges, tagUsage]) => {
-            const matched = knowledges
+            currentMatches = knowledges
                 .filter((knowledge) => isInCurrentView(knowledge) && matchesQuery(knowledge, query) && matchesSelectedTags(knowledge))
                 .sort((a, b) => computeWeight(b, tagUsage) - computeWeight(a, tagUsage));
-            const hasActiveFilter = query.length > 0 || selectedTags.size > 0;
-            const results = (hasActiveFilter || showingTrash) ? matched : matched.slice(0, DEFAULT_LIMIT);
 
             clearChildren(document.getElementById('container'));
-            results.forEach((knowledge) => renderKnowledgeCard(knowledge, false, selectedTags));
+            loadedCount = 0;
+            loadMore();
         })
         .catch((error) => {
             console.log(error);
         });
+}
+
+function initInfiniteScroll() {
+    const observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+            loadMore();
+        }
+    }, { rootMargin: '400px' });
+
+    observer.observe(document.getElementById('loadMoreSentinel'));
 }
 
 export function init() {
@@ -122,6 +144,7 @@ export function init() {
     document.addEventListener(TAG_TOGGLED_EVENT, (event) => toggleTag(event.detail.tag));
     document.getElementById('trashButton').addEventListener('click', toggleTrashView);
 
+    initInfiniteScroll();
     updateClearButtonVisibility();
     renderResults();
 }

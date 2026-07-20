@@ -4,6 +4,7 @@ const STORAGE_KEY = 'settings';
 
 const DEFAULT_SETTINGS = {
     faviconFetchingEnabled: true,
+    cardDensity: 'compact',
 };
 
 export async function getSettings() {
