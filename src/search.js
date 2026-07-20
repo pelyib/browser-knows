@@ -91,6 +91,26 @@ function loadMore() {
     loadedCount = nextCount;
 }
 
+function isSentinelNear() {
+    const sentinel = document.getElementById('loadMoreSentinel');
+    return sentinel.getBoundingClientRect().top <= window.innerHeight + 400;
+}
+
+// IntersectionObserver only fires on an enter/exit transition. If one page of
+// results doesn't push the sentinel past the viewport (tall screen, short
+// cards), it stays "intersecting" and the observer never fires again, so we
+// can't rely on it alone - loop here until the sentinel is actually out of
+// range or there's nothing left to load.
+function loadWhileSentinelNear() {
+    while (isSentinelNear()) {
+        const before = loadedCount;
+        loadMore();
+        if (loadedCount === before) {
+            break;
+        }
+    }
+}
+
 function renderResults() {
     const query = document.getElementById('search').value.trim().toLowerCase();
 
@@ -103,7 +123,7 @@ function renderResults() {
 
             clearChildren(document.getElementById('container'));
             loadedCount = 0;
-            loadMore();
+            loadWhileSentinelNear();
         })
         .catch((error) => {
             console.log(error);
@@ -113,7 +133,7 @@ function renderResults() {
 function initInfiniteScroll() {
     const observer = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
-            loadMore();
+            loadWhileSentinelNear();
         }
     }, { rootMargin: '400px' });
 
